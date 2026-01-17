@@ -162,6 +162,19 @@ func CreateRepositoryByExample(ctx context.Context, doer, u *user_model.User, re
 		return fmt.Errorf("CopyDefaultWebhooksToRepo: %w", err)
 	}
 
+	if setting.Service.ServiceAccountUsername != "" {
+		serviceUser, err := user_model.GetUserByName(ctx, setting.Service.ServiceAccountUsername)
+		if err != nil {
+			if !user_model.IsErrUserNotExist(err) {
+				log.Error("Failed to get service account user: %v", err)
+			}
+		} else if serviceUser != nil {
+			if err := AddCollaborator(ctx, repo, serviceUser); err != nil {
+				log.Error("Failed to add service account as collaborator: %v", err)
+			}
+		}
+	}
+
 	return nil
 }
 
