@@ -96,6 +96,9 @@ var Service = struct {
 	OpenIDWhitelist    []*regexp.Regexp
 	OpenIDBlacklist    []*regexp.Regexp
 
+	// ServiceAccount settings - username of the bot account that gets read/write access to all repositories
+	ServiceAccountUsername string
+
 	// Explore page settings
 	Explore struct {
 		RequireSigninView        bool `ini:"REQUIRE_SIGNIN_VIEW"`
@@ -298,6 +301,8 @@ func loadServiceFrom(rootCfg ConfigProvider) {
 	Service.MaxUserRedirects = sec.Key("MAX_USER_REDIRECTS").MustInt64(maxUserRedirectsDefault)
 
 	mustMapSetting(rootCfg, "service.explore", &Service.Explore)
+
+	Service.ServiceAccountUsername = sec.Key("SERVICE_ACCOUNT_USERNAME").String()
 
 	loadOpenIDSetting(rootCfg)
 }
