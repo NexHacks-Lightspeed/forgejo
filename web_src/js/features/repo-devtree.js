@@ -220,6 +220,13 @@ function renderGraph(container, graphData, owner, repo) {
   const minColumn = Math.min(...commits.map((c) => c.column));
   const maxColumn = Math.max(...commits.map((c) => c.column));
 
+  // Build flow color map from API data
+  const flows = graphData.flows || [];
+  const flowColorMap = new Map();
+  flows.forEach(flow => {
+    flowColorMap.set(flow.id, flow.color);
+  });
+
   // Build commit map for parent lookups
   const commitMap = new Map();
   commits.forEach((commit) => {
@@ -279,7 +286,8 @@ function renderGraph(container, graphData, owner, repo) {
   commits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
-    const commitColor = commit.color_number;
+    const commitFlowId = commit.flow_id;
+    const commitColor = flowColorMap.get(commitFlowId) || 0;
 
     // Draw connections to parents
     const parents = commit.parents || [];
@@ -294,7 +302,8 @@ function renderGraph(container, graphData, owner, repo) {
 
       const parentX = parent.column * COLUMN_SPACING + COLUMN_SPACING;
       const parentY = parent.row * ROW_SPACING + (ROW_SPACING / 2);
-      const parentColor = parent.color_number;
+      const parentFlowId = parent.flow_id;
+      const parentColor = flowColorMap.get(parentFlowId) || 0;
 
       // Determine edge color: use commit's color for its outgoing edge to parent
       const edgeColor = getBranchColor(commitColor);
@@ -361,7 +370,8 @@ function renderGraph(container, graphData, owner, repo) {
   commits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
-    const colorNum = commit.color_number;
+    const commitFlowId = commit.flow_id;
+    const colorNum = flowColorMap.get(commitFlowId) || 0;
 
     // Create commit card node (Railway-style)
     const card = createCommitCard(commit, x, y, colorNum);
