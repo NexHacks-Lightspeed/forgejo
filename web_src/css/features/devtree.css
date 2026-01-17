@@ -1,0 +1,1172 @@
+/* Dev Tree - Railway-Inspired Dark Theme */
+
+/* Remove all padding/margin from parent containers */
+.page-content.repository.devtree {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.page-content.repository.devtree .ui.container {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+/* Container - Full width, no borders */
+#devtree-container {
+  overflow: hidden;
+  background: #0f0f0f;
+  width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* Railway-style Dark Zoom Controls - Positioned within canvas */
+.zoom-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 0;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+
+.zoom-controls button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.15s ease;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.zoom-controls button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 1);
+  transform: scale(1.05);
+}
+
+.zoom-controls button:active {
+  transform: none;
+}
+
+/* Custom tooltip for zoom buttons */
+.zoom-controls button::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-weight: 400;
+  z-index: 1000;
+}
+
+.zoom-controls button:hover::after {
+  opacity: 1;
+}
+
+/* Canvas - Dark Railway-style infinite canvas */
+#devtree-canvas {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #0f0f0f;
+}
+
+#devtree-graph-container {
+  width: 100%;
+  height: 100vh;
+  cursor: grab;
+  position: relative;
+  overflow: hidden;
+}
+
+#devtree-graph-container.panning {
+  cursor: grabbing;
+}
+
+#devtree-graph-container svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Flow groups - Railway-style flowing lines */
+.paths-layer path {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.7;
+}
+
+/* Commit card nodes - Railway-style cards */
+.commit-card {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform-origin: center;
+}
+
+.commit-card rect {
+  transition: all 0.2s ease;
+}
+
+.commit-card:hover rect {
+  stroke-width: 2.5 !important;
+  filter: brightness(1.4);
+}
+
+.commit-card:hover text {
+  fill: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.commit-card:active {
+  transform: none;
+}
+
+/* Legacy circle commits (fallback) */
+.flow-commit {
+  cursor: pointer;
+  transition: none;
+  transform-origin: center;
+}
+
+.flow-commit:active {
+  transform: none;
+}
+
+/* Commit card text styling */
+.commit-card-text {
+  font-family: var(--fonts-monospace);
+  font-size: 11px;
+  font-weight: 600;
+  fill: #f5f5f5;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+
+.commit-card-message {
+  font-family: var(--fonts-regular);
+  font-size: 10.5px;
+  fill: rgba(255, 255, 255, 0.75);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Commit type indicators */
+.commit-card.merge-commit rect {
+  stroke-width: 2;
+  stroke-dasharray: 4 2;
+}
+
+.commit-card.tagged-commit rect {
+  stroke-width: 2.5;
+}
+
+
+/* Railway-style Dark Inspector Panel - Overlay */
+.devtree-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.devtree-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Railway-style Dark Inspector Panel - Slide-out */
+.devtree-panel {
+  position: absolute;
+  top: 0;
+  right: -600px;
+  width: 600px;
+  max-width: 100%;
+  height: 100%;
+  background: #0f0f0f;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.devtree-panel.active {
+  right: 0;
+}
+
+/* Custom scrollbar for panel */
+.devtree-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.devtree-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.devtree-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+}
+
+.devtree-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.devtree-panel .close-panel {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 20px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  font-weight: 300;
+}
+
+.devtree-panel .close-panel:hover {
+  color: #fb7185;
+  transform: scale(1.1);
+}
+
+.devtree-panel .panel-content {
+  padding: 24px;
+  padding-top: 60px;
+}
+
+.devtree-panel .loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+/* Panel content sections - Railway dark cards */
+.commit-section {
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.commit-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.commit-section:last-child {
+  margin-bottom: 0;
+}
+
+.commit-section h4 {
+  margin: 0 0 14px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+/* Compact metadata section */
+.commit-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.commit-sha-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.sha-label {
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.commit-sha-link {
+  flex: 1;
+  text-decoration: none;
+  display: block;
+}
+
+.commit-sha-link:hover .commit-sha-code {
+  background: rgba(167, 139, 250, 0.2);
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.1);
+}
+
+.commit-sha-code {
+  font-family: var(--fonts-monospace);
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  color: #b4a0ff;
+  word-break: break-all;
+  display: block;
+  transition: all 0.2s ease;
+}
+
+.commit-stats-inline {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(167, 139, 250, 0.3);
+}
+
+.stat-item {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.stat-item.additions {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.stat-item.deletions {
+  color: #fb7185;
+  font-weight: 600;
+}
+
+.commit-author-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 0;
+}
+
+.commit-author-info img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid rgba(167, 139, 250, 0.3);
+  transition: border-color 0.2s ease;
+}
+
+.commit-author-info:hover img {
+  border-color: rgba(167, 139, 250, 0.5);
+}
+
+.commit-author-details {
+  flex: 1;
+}
+
+.commit-author-details .name {
+  font-weight: 600;
+  display: block;
+  font-size: 15px;
+  margin-bottom: 4px;
+  color: #f5f5f5;
+  letter-spacing: -0.01em;
+}
+
+.commit-author-details .email {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  display: block;
+  font-family: var(--fonts-monospace);
+}
+
+.commit-author-details .date {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  display: block;
+  margin-top: 6px;
+}
+
+/* Create Issue button in commit panel */
+.create-issue-from-commit {
+  transition: all 0.2s ease;
+  border-radius: 0;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.create-issue-from-commit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+}
+
+.create-issue-from-commit:active {
+  transform: translateY(0);
+}
+
+/* Commit message section - no header */
+.commit-message-section {
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+}
+
+.commit-message-title-link {
+  text-decoration: none;
+  display: block;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+  padding: 2px 0;
+}
+
+.commit-message-title-link:hover {
+  opacity: 0.85;
+}
+
+.commit-message-title-link:hover .commit-message-title {
+  color: #b4a0ff;
+}
+
+.commit-message-title {
+  font-size: 19px;
+  font-weight: 600;
+  color: #f5f5f5;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  transition: color 0.2s ease;
+}
+
+.commit-message-body {
+  white-space: pre-wrap;
+  font-family: var(--fonts-regular);
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.75);
+  padding-left: 12px;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Files section */
+.commit-files-section {
+  max-height: none;
+}
+
+.commit-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.file-item {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.file-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.file-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-family: var(--fonts-monospace);
+  font-size: 12px;
+  transition: background 0.15s ease;
+}
+
+.file-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.view-diff-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  padding: 5px 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+
+.view-diff-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.view-diff-btn.active {
+  background: rgba(167, 139, 250, 0.25);
+  color: #b4a0ff;
+  border-color: rgba(167, 139, 250, 0.6);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2);
+}
+
+.file-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 0;
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.file-status.added {
+  background: #dcffe4;
+  color: #22863a;
+}
+
+.file-status.modified {
+  background: #fff5b1;
+  color: #735c0f;
+}
+
+.file-status.deleted {
+  background: #ffdce0;
+  color: #cb2431;
+}
+
+.file-path {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.file-changes {
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  margin-left: auto;
+}
+
+.file-changes .additions {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.file-changes .deletions {
+  color: #fb7185;
+  font-weight: 600;
+}
+
+/* Diff viewer */
+.file-diff {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.6);
+  max-height: 400px;
+  overflow-y: auto;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 400px;
+  }
+}
+
+.file-diff::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.file-diff::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.file-diff::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+}
+
+.diff-loading,
+.diff-error {
+  padding: 20px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+}
+
+.diff-error {
+  color: #f85149;
+}
+
+.diff-view {
+  font-family: var(--fonts-monospace);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.diff-line {
+  padding: 2px 8px;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.diff-line code {
+  font-family: inherit;
+  background: none;
+  padding: 0;
+}
+
+.diff-header {
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.03);
+  font-weight: 600;
+}
+
+.diff-hunk {
+  color: #58a6ff;
+  background: rgba(88, 166, 255, 0.1);
+  font-weight: 600;
+}
+
+.diff-addition {
+  background: rgba(74, 222, 128, 0.12);
+  color: #4ade80;
+}
+
+.diff-addition::before {
+  content: '+';
+  color: #4ade80;
+  margin-right: 4px;
+  font-weight: 600;
+}
+
+.diff-deletion {
+  background: rgba(251, 113, 133, 0.12);
+  color: #fb7185;
+}
+
+.diff-deletion::before {
+  content: '-';
+  color: #fb7185;
+  margin-right: 4px;
+  font-weight: 600;
+}
+
+.diff-context {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.diff-context::before {
+  content: ' ';
+  margin-right: 4px;
+}
+
+/* Responsive design */
+@media (max-width: 767px) {
+  .devtree-panel {
+    width: 100%;
+    right: -100%;
+  }
+
+  #devtree-canvas {
+    height: 100vh;
+  }
+
+  .commit-section {
+    padding: 16px;
+  }
+
+  .devtree-panel .panel-content {
+    padding: 20px;
+  }
+
+  .zoom-controls {
+    top: 10px;
+    left: 10px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .devtree-panel {
+    width: 420px;
+  }
+}
+
+/* Loading and error states */
+#loading {
+  text-align: center;
+  padding: 100px 0;
+}
+
+#error {
+  margin: 20px;
+  border-radius: 0;
+}
+
+/* Agent Status Badge */
+.agent-status-badge {
+  position: absolute;
+  top: 80px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.agent-status-badge .status-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse-status 2s infinite;
+  flex-shrink: 0;
+}
+
+.agent-status-badge.status-idle .status-icon {
+  background: #6b7280;
+  animation: none;
+}
+
+.agent-status-badge.status-analyzing .status-icon {
+  background: #60a5fa;
+}
+
+.agent-status-badge.status-coding .status-icon {
+  background: #a78bfa;
+}
+
+.agent-status-badge.status-testing .status-icon {
+  background: #fbbf24;
+}
+
+.agent-status-badge.status-creating-pr .status-icon {
+  background: #34d399;
+}
+
+.agent-status-badge.status-completed .status-icon {
+  background: #22c55e;
+  animation: none;
+}
+
+.agent-status-badge.status-error .status-icon {
+  background: #ef4444;
+  animation: none;
+}
+
+.agent-status-badge .status-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 120px;
+}
+
+.agent-status-badge .progress-bar {
+  width: 80px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.agent-status-badge .progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  transition: width 0.5s ease;
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Active Agent on Graph */
+.commit-card.agent-active rect {
+  stroke-width: 3;
+  stroke: #00ff88 !important;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+  animation: pulse-agent 2s infinite;
+}
+
+@keyframes pulse-agent {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* PR Review Panel (left side) */
+.pr-review-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.pr-review-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.pr-review-panel {
+  position: absolute;
+  top: 0;
+  left: -500px;
+  width: 500px;
+  max-width: 100%;
+  height: 100%;
+  background: #0f0f0f;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  z-index: 1000;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pr-review-panel.active {
+  left: 0;
+}
+
+.pr-review-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.pr-review-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.pr-review-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0;
+}
+
+.pr-review-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.pr-review-panel .close-panel {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-size: 20px;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  font-weight: 300;
+}
+
+.pr-review-panel .close-panel:hover {
+  color: #fb7185;
+  transform: scale(1.1);
+}
+
+.pr-review-panel .panel-content {
+  padding: 24px;
+  padding-top: 60px;
+}
+
+.pr-review-section {
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.pr-review-section:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.pr-review-section h4 {
+  margin: 0 0 14px 0;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.pr-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin-bottom: 8px;
+}
+
+.pr-number {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+}
+
+.pr-state {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.pr-state.open {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.pr-state.closed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fb7185;
+}
+
+.pr-state.merged {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+}
+
+.pr-meta-line {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 6px;
+}
+
+.pr-meta-line strong {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pr-commit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pr-commit-item {
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 6px;
+  font-family: var(--fonts-monospace);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  transition: background 0.2s ease;
+}
+
+.pr-commit-item:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.pr-commit-sha {
+  color: #b4a0ff;
+  margin-right: 8px;
+}
+
+.pr-file-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pr-file-item {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 4px;
+  font-family: var(--fonts-monospace);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pr-file-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.pr-file-status.added {
+  background: #dcffe4;
+  color: #22863a;
+}
+
+.pr-file-status.modified {
+  background: #fff5b1;
+  color: #735c0f;
+}
+
+.pr-file-status.deleted {
+  background: #ffdce0;
+  color: #cb2431;
+}
+
+.pr-file-name {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pr-review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.pr-review-actions button {
+  flex: 1;
+  min-width: 100px;
+  font-size: 12px;
+}
+
+.pr-review-comment-form {
+  margin-top: 16px;
+}
+
+.pr-review-comment-form textarea {
+  width: 100%;
+  min-height: 80px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  font-size: 13px;
+  resize: vertical;
+}
+
+/* Modal improvements for devtree */
+#create-issue-modal .ui.form .field.required > label::after,
+#deploy-agent-modal .ui.form .field.required > label::after {
+  content: '*';
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+/* Ensure create issue modal is always on top */
+#create-issue-modal {
+  pointer-events: auto !important;
+}
+
+#create-issue-dimmer {
+  pointer-events: auto !important;
+}
+
+/* Override any conflicting styles */
+.ui.modal#create-issue-modal {
+  z-index: 1000000 !important;
+}
+
+.ui.modal#create-issue-modal * {
+  pointer-events: auto !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .agent-status-badge {
+    top: 60px;
+    left: 10px;
+    padding: 8px 12px;
+  }
+
+  .agent-status-badge .status-text {
+    font-size: 11px;
+    min-width: 80px;
+  }
+
+  .agent-status-badge .progress-bar {
+    width: 60px;
+  }
+
+  .pr-review-panel {
+    width: 100%;
+    left: -100%;
+  }
+}

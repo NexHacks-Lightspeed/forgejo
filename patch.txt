@@ -1,0 +1,3846 @@
+diff --git a/options/locale/locale_en-US.ini b/options/locale/locale_en-US.ini
+index a4d4ce058e..84f403fa42 100644
+--- a/options/locale/locale_en-US.ini
++++ b/options/locale/locale_en-US.ini
+@@ -1269,17 +1269,6 @@ filter_branch_and_tag = Filter branch or tag
+ find_tag = Find tag
+ branches = Branches
+ tags = Tags
+-devtree = Dev Tree
+-devtree.title = Git Commit Graph
+-devtree.empty_repo = This repository is empty
+-devtree.error = Failed to Load Graph
+-devtree.zoom_in = Zoom In
+-devtree.zoom_out = Zoom Out
+-devtree.reset = Reset View
+-devtree.instructions = How to Navigate
+-devtree.drag_to_pan = Drag to pan the graph
+-devtree.scroll_to_zoom = Scroll to zoom in/out
+-devtree.click_commit = Click a commit to view details
+ issues = Issues
+ pulls = Pull requests
+ project = Projects
+diff --git a/package-lock.json b/package-lock.json
+index ce7c5a4f9c..931a499f7e 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -73,8 +73,6 @@
+         "tributejs": "5.1.3",
+         "uint8-to-base64": "0.2.0",
+         "vanilla-colorful": "0.7.2",
+-        "vis-data": "8.0.3",
+-        "vis-network": "10.0.2",
+         "vue": "3.5.26",
+         "vue-chartjs": "5.3.3",
+         "vue-loader": "17.4.2",
+@@ -304,6 +302,7 @@
+       "integrity": "sha512-FA5LmZVF1VziNc0bIdCSA1IoSVnDCqE8HJIZZv2/W8YmoAM50+tnUgJR/gQZwEeIMleuIOnRnHA/UaZRNeV4iQ==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@keyv/serialize": "^1.1.1"
+       }
+@@ -373,6 +372,7 @@
+       "resolved": "https://registry.npmjs.org/@citation-js/core/-/core-0.7.21.tgz",
+       "integrity": "sha512-Vobv2/Yfnn6C6BVO/pvj7madQ7Mfzl83/jAWwixbemGF6ZThhGMz8++FD9hWHyHXDMYuLGa6fK68c2VsolZmTA==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@citation-js/date": "^0.5.0",
+         "@citation-js/name": "^0.4.2",
+@@ -805,6 +805,7 @@
+         }
+       ],
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=18"
+       },
+@@ -848,6 +849,7 @@
+         }
+       ],
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=18"
+       }
+@@ -940,18 +942,6 @@
+         "url": "https://github.com/sponsors/JounQin"
+       }
+     },
+-    "node_modules/@egjs/hammerjs": {
+-      "version": "2.0.17",
+-      "resolved": "https://registry.npmjs.org/@egjs/hammerjs/-/hammerjs-2.0.17.tgz",
+-      "integrity": "sha512-XQsZgjm2EcVUiZQf11UBJQfmZeEmOW8DpI1gsFeln6w0ae0ii4dMQEQ0kjl6DspdWX1aGY1/loyXnP0JS06e/A==",
+-      "peer": true,
+-      "dependencies": {
+-        "@types/hammerjs": "^2.0.36"
+-      },
+-      "engines": {
+-        "node": ">=0.8.0"
+-      }
+-    },
+     "node_modules/@emnapi/core": {
+       "version": "1.7.1",
+       "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.7.1.tgz",
+@@ -4291,6 +4281,7 @@
+       "integrity": "sha512-hM5faZwg7aVNa819m/5r7D0h0c9yC4DUlWAOvHAtISdFTc8xB86VmX5Xqabrama3wIPJ/q9RbGS1worb6JfnMg==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/scope-manager": "8.50.1",
+         "@typescript-eslint/types": "8.50.1",
+@@ -5364,6 +5355,7 @@
+       "resolved": "https://registry.npmjs.org/acorn/-/acorn-8.15.0.tgz",
+       "integrity": "sha512-NZyJarBfL7nWwIq+FDL6Zp/yHEhePMNnnJ0y3qfieCrmNvYct8uvtiV41UvlSe6apAfk0fY1FbWx+NwfmpvtTg==",
+       "license": "MIT",
++      "peer": true,
+       "bin": {
+         "acorn": "bin/acorn"
+       },
+@@ -5398,6 +5390,7 @@
+       "resolved": "https://registry.npmjs.org/ajv/-/ajv-8.17.1.tgz",
+       "integrity": "sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "fast-deep-equal": "^3.1.3",
+         "fast-uri": "^3.0.1",
+@@ -5842,6 +5835,7 @@
+         }
+       ],
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.9.0",
+         "caniuse-lite": "^1.0.30001759",
+@@ -6099,6 +6093,7 @@
+       "resolved": "https://registry.npmjs.org/chart.js/-/chart.js-4.5.1.tgz",
+       "integrity": "sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@kurkle/color": "^0.3.0"
+       },
+@@ -6137,6 +6132,7 @@
+       "resolved": "https://registry.npmjs.org/chevrotain/-/chevrotain-11.0.3.tgz",
+       "integrity": "sha512-ci2iJH6LeIkvP9eJW6gpueU8cnZhv85ELY8w8WiFtNjMHA5ad6pQLaJo9mEly/9qUyCpvqX8/POVUTf18/HFdw==",
+       "license": "Apache-2.0",
++      "peer": true,
+       "dependencies": {
+         "@chevrotain/cst-dts-gen": "11.0.3",
+         "@chevrotain/gast": "11.0.3",
+@@ -6377,18 +6373,6 @@
+       "dev": true,
+       "license": "MIT"
+     },
+-    "node_modules/component-emitter": {
+-      "version": "2.0.0",
+-      "resolved": "https://registry.npmjs.org/component-emitter/-/component-emitter-2.0.0.tgz",
+-      "integrity": "sha512-4m5s3Me2xxlVKG9PkZpQqHQR7bgpnN7joDMJ4yvVkVXngjoITG76IaZmzmywSeRTeTpc6N6r3H3+KyUurV8OYw==",
+-      "peer": true,
+-      "engines": {
+-        "node": ">=18"
+-      },
+-      "funding": {
+-        "url": "https://github.com/sponsors/sindresorhus"
+-      }
+-    },
+     "node_modules/concat-map": {
+       "version": "0.0.1",
+       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
+@@ -6642,6 +6626,7 @@
+       "resolved": "https://registry.npmjs.org/cytoscape/-/cytoscape-3.33.1.tgz",
+       "integrity": "sha512-iJc4TwyANnOGR1OmWhsS9ayRS3s+XQ185FmuHObThD+5AeJCakAAbWv8KimMTt08xCCLNgneQwFp+JRJOr9qGQ==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=0.10"
+       }
+@@ -7045,6 +7030,7 @@
+       "resolved": "https://registry.npmjs.org/d3-selection/-/d3-selection-3.0.0.tgz",
+       "integrity": "sha512-fmTRWbNMmsmWq6xJV8D19U/gw/bwrHfNXxrIN+HfZgnzqTHp9jOmKMhsTUjXOJnZOdZY9Q28y4yebKzqDKlxlQ==",
+       "license": "ISC",
++      "peer": true,
+       "engines": {
+         "node": ">=12"
+       }
+@@ -7204,7 +7190,8 @@
+       "version": "1.11.18",
+       "resolved": "https://registry.npmjs.org/dayjs/-/dayjs-1.11.18.tgz",
+       "integrity": "sha512-zFBQ7WFRvVRhKcWoUh+ZA1g2HVgUbsZm9sbddh8EC5iv93sui8DVVz1Npvz+r6meo9VKfa8NyLWBsQK1VvIKPA==",
+-      "license": "MIT"
++      "license": "MIT",
++      "peer": true
+     },
+     "node_modules/debug": {
+       "version": "4.4.3",
+@@ -7896,6 +7883,7 @@
+       "integrity": "sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@eslint-community/eslint-utils": "^4.8.0",
+         "@eslint-community/regexpp": "^4.12.1",
+@@ -8045,6 +8033,7 @@
+       "integrity": "sha512-vPZZsiOKaBAIATpFE2uMI4w5IRwdv/FpQ+qZZMR4E+PeOcM4OeoEbqxRMnywdxP19TyB/3h6QBB0EWon7letSQ==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@typescript-eslint/types": "^8.35.0",
+         "comment-parser": "^1.4.1",
+@@ -9160,6 +9149,7 @@
+       "integrity": "sha512-QsCdAUHAmiDeKeaNojb1OHOPF7NjcWPBR7obdu3NwH2a/oyQaLg5d0aaCy/9My6CdPChYF07dvz5chaXBGaD4g==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@types/node": "^20.0.0",
+         "@types/whatwg-mimetype": "^3.0.2",
+@@ -10425,6 +10415,7 @@
+       "integrity": "sha512-B7qPcEVE3NVkmSJbaYxvv4cHkVW7DQsZz13pUMrfS8z8Q/BuShN+gcTXrUlPiGqM2/t/EEaI030bpxMqY8gMlw==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">= 10.16.0"
+       }
+@@ -10570,12 +10561,6 @@
+         "node": ">= 12"
+       }
+     },
+-    "node_modules/keycharm": {
+-      "version": "0.4.0",
+-      "resolved": "https://registry.npmjs.org/keycharm/-/keycharm-0.4.0.tgz",
+-      "integrity": "sha512-TyQTtsabOVv3MeOpR92sIKk/br9wxS+zGj4BG7CR8YbK4jM3tyIBaF0zhzeBUMx36/Q/iQLOKKOT+3jOQtemRQ==",
+-      "peer": true
+-    },
+     "node_modules/keyv": {
+       "version": "4.5.4",
+       "resolved": "https://registry.npmjs.org/keyv/-/keyv-4.5.4.tgz",
+@@ -12476,6 +12461,7 @@
+       "integrity": "sha512-agTcKlMw/mjBWOnD6kFZttAAGHgi/Nw0CZ2o6JqWSbMlI219lAFLZZCyqByTsvVAJq5XA5H8cA6PrvBRpBWEuQ==",
+       "dev": true,
+       "license": "Apache-2.0",
++      "peer": true,
+       "bin": {
+         "playwright-core": "cli.js"
+       },
+@@ -12548,6 +12534,7 @@
+         }
+       ],
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "nanoid": "^3.3.11",
+         "picocolors": "^1.1.1",
+@@ -12868,6 +12855,7 @@
+       "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-7.1.1.tgz",
+       "integrity": "sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "cssesc": "^3.0.0",
+         "util-deprecate": "^1.0.2"
+@@ -13363,6 +13351,7 @@
+       "integrity": "sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "bin": {
+         "rollup": "dist/bin/rollup"
+       },
+@@ -13595,6 +13584,7 @@
+       "resolved": "https://registry.npmjs.org/seroval/-/seroval-1.3.2.tgz",
+       "integrity": "sha512-RbcPH1n5cfwKrru7v7+zrZvjLurgHhGyso3HTyGtRivGWgYjbOmGuivCQaORNELjNONoK35nj28EoWul9sb1zQ==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=10"
+       }
+@@ -13903,6 +13893,7 @@
+       "resolved": "https://registry.npmjs.org/solid-js/-/solid-js-1.9.10.tgz",
+       "integrity": "sha512-Coz956cos/EPDlhs6+jsdTxKuJDPT7B5SVIWgABwROyxjY7Xbr8wkzD68Et+NxnV7DLJ3nJdAC2r9InuV/4Jew==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "csstype": "^3.1.0",
+         "seroval": "~1.3.0",
+@@ -14274,6 +14265,7 @@
+         }
+       ],
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@csstools/css-parser-algorithms": "^3.0.5",
+         "@csstools/css-syntax-patches-for-csstree": "^1.0.19",
+@@ -14865,6 +14857,7 @@
+       "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.3.tgz",
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -14887,6 +14880,7 @@
+       "resolved": "https://registry.npmjs.org/tippy.js/-/tippy.js-6.3.7.tgz",
+       "integrity": "sha512-E1d3oP2emgJ9dRQZdf3Kkn0qJgI6ZLpyS5z6ZkY1DF3kaQaBsGZsndEpHwx+eC+tYM41HaSNvNtLx8tU57FzTQ==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@popperjs/core": "^2.9.0"
+       }
+@@ -15092,6 +15086,7 @@
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+       "devOptional": true,
+       "license": "Apache-2.0",
++      "peer": true,
+       "bin": {
+         "tsc": "bin/tsc",
+         "tsserver": "bin/tsserver"
+@@ -15322,59 +15317,13 @@
+       "integrity": "sha512-z2YZusTFC6KnLERx1cgoIRX2CjPRP0W75N+3CC6gbvdX5Ch47rZkEMGO2Xnf+IEmi3RiFLxS18gayMA27iU7Kg==",
+       "license": "MIT"
+     },
+-    "node_modules/vis-data": {
+-      "version": "8.0.3",
+-      "resolved": "https://registry.npmjs.org/vis-data/-/vis-data-8.0.3.tgz",
+-      "integrity": "sha512-jhnb6rJNqkKR1Qmlay0VuDXY9ZlvAnYN1udsrP4U+krgZEq7C0yNSKdZqmnCe13mdnf9AdVcdDGFOzy2mpPoqw==",
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/visjs"
+-      },
+-      "peerDependencies": {
+-        "uuid": "^3.4.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^13.0.0",
+-        "vis-util": ">=6.0.0"
+-      }
+-    },
+-    "node_modules/vis-network": {
+-      "version": "10.0.2",
+-      "resolved": "https://registry.npmjs.org/vis-network/-/vis-network-10.0.2.tgz",
+-      "integrity": "sha512-qPl8GLYBeHEFqiTqp4VBbYQIJ2EA8KLr7TstA2E8nJxfEHaKCU81hQLz7hhq11NUpHbMaRzBjW5uZpVKJ45/wA==",
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/visjs"
+-      },
+-      "peerDependencies": {
+-        "@egjs/hammerjs": "^2.0.0",
+-        "component-emitter": "^1.3.0 || ^2.0.0",
+-        "keycharm": "^0.2.0 || ^0.3.0 || ^0.4.0",
+-        "uuid": "^3.4.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0 || ^11.0.0 || ^13.0.0",
+-        "vis-data": ">=8.0.0",
+-        "vis-util": ">=6.0.0"
+-      }
+-    },
+-    "node_modules/vis-util": {
+-      "version": "6.0.0",
+-      "resolved": "https://registry.npmjs.org/vis-util/-/vis-util-6.0.0.tgz",
+-      "integrity": "sha512-qtpts3HRma0zPe4bO7t9A2uejkRNj8Z2Tb6do6lN85iPNWExFkUiVhdAq5uLGIUqBFduyYeqWJKv/jMkxX0R5g==",
+-      "peer": true,
+-      "engines": {
+-        "node": ">=8"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/visjs"
+-      },
+-      "peerDependencies": {
+-        "@egjs/hammerjs": "^2.0.0",
+-        "component-emitter": "^1.3.0 || ^2.0.0"
+-      }
+-    },
+     "node_modules/vite": {
+       "version": "7.3.0",
+       "resolved": "https://registry.npmjs.org/vite/-/vite-7.3.0.tgz",
+       "integrity": "sha512-dZwN5L1VlUBewiP6H9s2+B3e3Jg96D0vzN+Ry73sOefebhYr9f94wwkMNN/9ouoU8pV1BqA1d1zGk8928cx0rg==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "esbuild": "^0.27.0",
+         "fdir": "^6.5.0",
+@@ -15497,6 +15446,7 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -15552,6 +15502,7 @@
+       "integrity": "sha512-E4t7DJ9pESL6E3I8nFjPa4xGUd3PmiWDLsDztS2qXSJWfHtbQnwAWylaBvSNY48I3vr8PTqIZlyK8TE3V3CA4Q==",
+       "dev": true,
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@vitest/expect": "4.0.16",
+         "@vitest/mocker": "4.0.16",
+@@ -15701,6 +15652,7 @@
+       "resolved": "https://registry.npmjs.org/vue/-/vue-3.5.26.tgz",
+       "integrity": "sha512-SJ/NTccVyAoNUJmkM9KUqPcYlY+u8OVL1X5EW9RIs3ch5H2uERxyyIUI4MRxVCSOiEcupX9xNGde1tL9ZKpimA==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@vue/compiler-dom": "3.5.26",
+         "@vue/compiler-sfc": "3.5.26",
+@@ -15824,6 +15776,7 @@
+       "resolved": "https://registry.npmjs.org/webpack/-/webpack-5.104.1.tgz",
+       "integrity": "sha512-Qphch25abbMNtekmEGJmeRUhLDbe+QfiWTiqpKYkpCOWY64v9eyl+KRRLmqOFA2AvKPpc9DC6+u2n76tQLBoaA==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@types/eslint-scope": "^3.7.7",
+         "@types/estree": "^1.0.8",
+@@ -15872,6 +15825,7 @@
+       "resolved": "https://registry.npmjs.org/webpack-cli/-/webpack-cli-6.0.1.tgz",
+       "integrity": "sha512-MfwFQ6SfwinsUVi0rNJm7rHZ31GyTcpVE5pgVA3hwFRb7COD4TzjUUwhGWKfO50+xdc2MQPuEBBJoqIMGt3JDw==",
+       "license": "MIT",
++      "peer": true,
+       "dependencies": {
+         "@discoveryjs/json-ext": "^0.6.1",
+         "@webpack-cli/configtest": "^3.0.1",
+diff --git a/package.json b/package.json
+index 7ac3750283..4f294c2e8e 100644
+--- a/package.json
++++ b/package.json
+@@ -72,8 +72,6 @@
+     "tributejs": "5.1.3",
+     "uint8-to-base64": "0.2.0",
+     "vanilla-colorful": "0.7.2",
+-    "vis-data": "8.0.3",
+-    "vis-network": "10.0.2",
+     "vue": "3.5.26",
+     "vue-chartjs": "5.3.3",
+     "vue-loader": "17.4.2",
+@@ -124,9 +122,7 @@
+     "vite-string-plugin": "1.4.9",
+     "vitest": "4.0.16"
+   },
+-  "browserslist": [
+-    "defaults"
+-  ],
++  "browserslist": ["defaults"],
+   "scarfSettings": {
+     "enabled": false
+   }
+diff --git a/routers/web/repo/devtree.go b/routers/web/repo/devtree.go
+deleted file mode 100644
+index 09b0961430..0000000000
+--- a/routers/web/repo/devtree.go
++++ /dev/null
+@@ -1,27 +0,0 @@
+-// Copyright 2024 The Forgejo Authors. All rights reserved.
+-// SPDX-License-Identifier: MIT
+-
+-package repo
+-
+-import (
+-	"net/http"
+-
+-	"forgejo.org/modules/base"
+-	"forgejo.org/services/context"
+-)
+-
+-const (
+-	tplDevTree base.TplName = "repo/devtree"
+-)
+-
+-// DevTree shows the interactive git commit graph
+-func DevTree(ctx *context.Context) {
+-	ctx.Data["Title"] = ctx.Tr("repo.devtree")
+-	ctx.Data["PageIsDevTree"] = true
+-
+-	if ctx.Repo.Repository.IsEmpty {
+-		ctx.Data["IsEmptyRepo"] = true
+-	}
+-
+-	ctx.HTML(http.StatusOK, tplDevTree)
+-}
+diff --git a/routers/web/web.go b/routers/web/web.go
+index 9ef3eb4e35..4e10dcc67b 100644
+--- a/routers/web/web.go
++++ b/routers/web/web.go
+@@ -1631,9 +1631,6 @@ func registerRoutes(m *web.Route) {
+ 			m.Get("/cherry-pick/{sha:([a-f0-9]{4,64})$}", repo.SetEditorconfigIfExists, repo.CherryPick)
+ 		}, repo.MustBeNotEmpty, context.RepoRef(), reqRepoCodeReader)
+ 
+-		// Dev Tree
+-		m.Get("/devtree", context.RepoRef(), repo.MustBeNotEmpty, repo.DevTree)
+-
+ 		m.Group("", func() {
+ 			m.Get("/rss/branch/*", feed.RenderBranchFeed("rss"))
+ 			m.Get("/atom/branch/*", feed.RenderBranchFeed("atom"))
+diff --git a/templates/repo/devtree.tmpl b/templates/repo/devtree.tmpl
+deleted file mode 100644
+index 4fc2b9adf5..0000000000
+--- a/templates/repo/devtree.tmpl
++++ /dev/null
+@@ -1,164 +0,0 @@
+-{{template "base/head" .}}
+-<div role="main" aria-label="{{.Title}}" class="page-content repository devtree">
+-	{{template "repo/header" .}}
+-	{{template "base/alert" .}}
+-
+-	{{if .IsEmptyRepo}}
+-		<div class="ui center aligned segment">
+-			<h3>{{ctx.Locale.Tr "repo.devtree.empty_repo"}}</h3>
+-		</div>
+-	{{else}}
+-		<div id="devtree-container" class="colored" data-owner="{{.Repository.OwnerName}}" data-repo="{{.Repository.Name}}">
+-			<div id="devtree-canvas">
+-				<div id="loading" class="ui active centered inline loader" style="margin: 100px 0;"></div>
+-				<div id="error" class="ui negative message" style="display: none;">
+-					<div class="header">{{ctx.Locale.Tr "repo.devtree.error"}}</div>
+-					<p id="error-text"></p>
+-				</div>
+-				<div id="devtree-graph-container"></div>
+-				<div class="zoom-controls">
+-					<button id="zoom-in" class="ui icon button" title="Zoom In">+</button>
+-					<button id="zoom-reset" class="ui icon button" title="Reset View">⊙</button>
+-					<button id="zoom-out" class="ui icon button" title="Zoom Out">−</button>
+-				</div>
+-				<!-- Commit detail side panel -->
+-				<div id="commit-detail-overlay" class="devtree-overlay"></div>
+-				<div id="commit-detail-panel" class="devtree-panel">
+-					<button class="close-panel ui icon button">×</button>
+-					<div class="panel-content">
+-						<div class="loading">Loading...</div>
+-					</div>
+-				</div>
+-
+-				<!-- Agent status badge -->
+-				<div id="agent-status-badge" class="agent-status-badge" style="display: none;">
+-					<div class="status-icon"></div>
+-					<div class="status-text">Idle</div>
+-					<div class="progress-bar">
+-						<div class="progress-bar-fill" style="width: 0%;"></div>
+-					</div>
+-				</div>
+-
+-				<!-- Floating Action Button -->
+-				<div id="devtree-fab" class="devtree-fab">
+-					<button class="ui circular primary icon button" id="fab-main-button">
+-						<i class="plus icon"></i>
+-					</button>
+-					<div class="fab-menu" style="display: none;">
+-						<button class="fab-menu-item" data-action="create-issue">
+-							<i class="exclamation icon"></i> Create Issue
+-						</button>
+-						<button class="fab-menu-item" data-action="deploy-agent">
+-							<i class="robot icon"></i> Deploy Agent
+-						</button>
+-					</div>
+-				</div>
+-			</div>
+-		</div>
+-
+-		<!-- PR Review Panel (left side) -->
+-		<div id="pr-review-overlay" class="pr-review-overlay"></div>
+-		<div id="pr-review-panel" class="pr-review-panel">
+-			<button class="close-panel ui icon button">×</button>
+-			<div class="panel-content">
+-				<div class="loading">Loading PR details...</div>
+-			</div>
+-		</div>
+-	{{end}}
+-</div>
+-
+-<!-- Create Issue Modal -->
+-<div id="create-issue-modal" class="ui modal">
+-	<div class="header">Create Issue from Commit</div>
+-	<div class="content">
+-		<form id="create-issue-form" class="ui form">
+-			<div class="field required">
+-				<label>Title</label>
+-				<input type="text" name="title" required maxlength="255" placeholder="Issue title">
+-			</div>
+-			<div class="field">
+-				<label>Description</label>
+-				<textarea name="body" rows="6" placeholder="Describe the issue or feature..."></textarea>
+-			</div>
+-			<div class="field">
+-				<label>Base Commit</label>
+-				<input type="text" name="base_sha" readonly id="issue-base-sha" placeholder="Select a commit from the graph">
+-			</div>
+-			<div class="field">
+-				<label>Assignees</label>
+-				<div class="ui multiple search selection dropdown" id="issue-assignees">
+-					<input type="hidden" name="assignees">
+-					<i class="dropdown icon"></i>
+-					<div class="default text">Select assignees</div>
+-					<div class="menu"></div>
+-				</div>
+-			</div>
+-			<div class="field">
+-				<label>Labels</label>
+-				<div class="ui multiple search selection dropdown" id="issue-labels">
+-					<input type="hidden" name="labels">
+-					<i class="dropdown icon"></i>
+-					<div class="default text">Select labels</div>
+-					<div class="menu"></div>
+-				</div>
+-			</div>
+-			<div class="field">
+-				<label>Milestone</label>
+-				<div class="ui search selection dropdown" id="issue-milestone">
+-					<input type="hidden" name="milestone">
+-					<i class="dropdown icon"></i>
+-					<div class="default text">Select milestone</div>
+-					<div class="menu"></div>
+-				</div>
+-			</div>
+-		</form>
+-	</div>
+-	<div class="actions">
+-		<button class="ui cancel button">Cancel</button>
+-		<button class="ui primary button" id="create-issue-submit">Create Issue</button>
+-	</div>
+-</div>
+-
+-<!-- Deploy Agent Modal -->
+-<div id="deploy-agent-modal" class="ui modal">
+-	<div class="header">Deploy Coding Agent</div>
+-	<div class="content">
+-		<form id="deploy-agent-form" class="ui form">
+-			<div class="field required">
+-				<label>Select Issue</label>
+-				<div class="ui search selection dropdown" id="agent-issue">
+-					<input type="hidden" name="issue_id" required>
+-					<i class="dropdown icon"></i>
+-					<div class="default text">Select an open issue</div>
+-					<div class="menu"></div>
+-				</div>
+-			</div>
+-			<div class="field">
+-				<label>Base Commit</label>
+-				<input type="text" name="base_sha" readonly id="agent-base-sha" placeholder="Select a commit from the graph">
+-			</div>
+-			<div class="field">
+-				<label>Simulation Speed</label>
+-				<div class="ui selection dropdown" id="agent-speed">
+-					<input type="hidden" name="simulation_speed" value="normal">
+-					<i class="dropdown icon"></i>
+-					<div class="default text">Normal</div>
+-					<div class="menu">
+-						<div class="item" data-value="fast">Fast (10x speed)</div>
+-						<div class="item" data-value="normal">Normal</div>
+-						<div class="item" data-value="slow">Slow (0.5x speed)</div>
+-					</div>
+-				</div>
+-			</div>
+-			<div class="ui info message">
+-				<p><strong>Note:</strong> This is a simulated agent for testing purposes. It will simulate making commits and creating a PR, but won't make actual changes to the repository.</p>
+-			</div>
+-		</form>
+-	</div>
+-	<div class="actions">
+-		<button class="ui cancel button">Cancel</button>
+-		<button class="ui primary button" id="deploy-agent-submit">Deploy Agent</button>
+-	</div>
+-</div>
+-
+-{{template "base/footer" .}}
+diff --git a/templates/repo/header.tmpl b/templates/repo/header.tmpl
+index 25efafbc2d..513758a149 100644
+--- a/templates/repo/header.tmpl
++++ b/templates/repo/header.tmpl
+@@ -96,13 +96,6 @@
+ 					</a>
+ 				{{end}}
+ 
+-				{{/* Dev Tree tab */}}
+-				{{if and (.Permission.CanRead $.UnitTypeCode) (not .Repository.IsEmpty)}}
+-					<a class="{{if .PageIsDevTree}}active {{end}}item" href="{{.RepoLink}}/devtree">
+-						{{svg "octicon-git-branch"}} {{ctx.Locale.Tr "repo.devtree"}}
+-					</a>
+-				{{end}}
+-
+ 				{{if .Permission.CanRead $.UnitTypeIssues}}
+ 					<a class="{{if .PageIsIssueList}}active {{end}}item" href="{{.RepoLink}}/issues">
+ 						{{svg "octicon-issue-opened"}} {{ctx.Locale.Tr "repo.issues"}}
+diff --git a/web_src/css/features/devtree.css b/web_src/css/features/devtree.css
+deleted file mode 100644
+index 6ced5c3e49..0000000000
+--- a/web_src/css/features/devtree.css
++++ /dev/null
+@@ -1,1204 +0,0 @@
+-/* Dev Tree - Railway-Inspired Dark Theme */
+-
+-/* Remove all padding/margin from parent containers */
+-.page-content.repository.devtree {
+-  padding: 0 !important;
+-  margin: 0 !important;
+-}
+-
+-.page-content.repository.devtree .ui.container {
+-  max-width: none !important;
+-  margin: 0 !important;
+-  padding: 0 !important;
+-  width: 100% !important;
+-}
+-
+-/* Container - Full width, no borders */
+-#devtree-container {
+-  overflow: auto;
+-  background: #0f0f0f;
+-  width: 100%;
+-  min-height: 100vh;
+-  height: 100vh;
+-  margin: 0;
+-  padding: 0;
+-}
+-
+-/* Railway-style Dark Zoom Controls - Positioned at top left */
+-.zoom-controls {
+-  position: fixed;
+-  top: 20px;
+-  left: 20px;
+-  display: flex;
+-  flex-direction: column;
+-  gap: 2px;
+-  background: rgba(0, 0, 0, 0.85);
+-  border-radius: 0;
+-  padding: 6px;
+-  border: 1px solid rgba(255, 255, 255, 0.2);
+-  z-index: 100;
+-  backdrop-filter: blur(8px);
+-}
+-
+-.zoom-controls button {
+-  width: 36px;
+-  height: 36px;
+-  padding: 0;
+-  font-size: 18px;
+-  line-height: 1;
+-  border: none;
+-  background: transparent;
+-  color: rgba(255, 255, 255, 0.6);
+-  cursor: pointer;
+-  border-radius: 0;
+-  transition: all 0.15s ease;
+-  font-weight: 400;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  position: relative;
+-}
+-
+-.zoom-controls button:hover {
+-  background: rgba(255, 255, 255, 0.15);
+-  color: rgba(255, 255, 255, 1);
+-  transform: scale(1.05);
+-}
+-
+-.zoom-controls button:active {
+-  transform: none;
+-}
+-
+-/* Custom tooltip for zoom buttons */
+-.zoom-controls button::after {
+-  content: attr(title);
+-  position: absolute;
+-  left: 50%;
+-  top: 100%;
+-  transform: translateX(-50%);
+-  margin-top: 8px;
+-  background: rgba(0, 0, 0, 0.9);
+-  color: #fff;
+-  padding: 6px 10px;
+-  font-size: 12px;
+-  white-space: nowrap;
+-  opacity: 0;
+-  pointer-events: none;
+-  transition: opacity 0.2s ease;
+-  border: 1px solid rgba(255, 255, 255, 0.15);
+-  font-weight: 400;
+-  z-index: 1000;
+-}
+-
+-.zoom-controls button:hover::after {
+-  opacity: 1;
+-}
+-
+-/* Canvas - Dark Railway-style infinite canvas */
+-#devtree-canvas {
+-  position: relative;
+-  width: 100%;
+-  min-height: 100vh;
+-  height: auto;
+-  overflow: hidden;
+-  background: #0f0f0f;
+-}
+-
+-#devtree-graph-container {
+-  width: 100%;
+-  min-height: 100vh;
+-  height: auto;
+-  cursor: grab;
+-  position: relative;
+-}
+-
+-#devtree-graph-container.panning {
+-  cursor: grabbing;
+-}
+-
+-#devtree-graph-container svg {
+-  width: 100%;
+-  height: auto;
+-  min-height: 100vh;
+-}
+-
+-/* Flow groups - Railway-style flowing lines */
+-.paths-layer path {
+-  stroke-width: 2.5;
+-  stroke-linecap: round;
+-  stroke-linejoin: round;
+-  opacity: 0.7;
+-}
+-
+-/* Commit card nodes - Railway-style cards */
+-.commit-card {
+-  cursor: pointer;
+-  transition: opacity 0.15s ease;
+-  transform-origin: center;
+-  opacity: 0.85;
+-}
+-
+-.commit-card:hover {
+-  opacity: 1;
+-}
+-
+-.commit-card rect {
+-  transition: filter 0.15s ease;
+-}
+-
+-.commit-card:hover rect {
+-  filter: brightness(1.15);
+-}
+-
+-.commit-card:active {
+-  transform: none;
+-}
+-
+-/* Legacy circle commits (fallback) */
+-.flow-commit {
+-  cursor: pointer;
+-  transition: none;
+-  transform-origin: center;
+-}
+-
+-.flow-commit:active {
+-  transform: none;
+-}
+-
+-/* Commit card text styling */
+-.commit-card-text {
+-  font-family: var(--fonts-monospace);
+-  font-size: 11px;
+-  font-weight: 600;
+-  fill: #f5f5f5;
+-  pointer-events: none;
+-  user-select: none;
+-  letter-spacing: 0.02em;
+-}
+-
+-.commit-card-message {
+-  font-family: var(--fonts-regular);
+-  font-size: 10.5px;
+-  fill: rgba(255, 255, 255, 0.75);
+-  pointer-events: none;
+-  user-select: none;
+-}
+-
+-/* Commit type indicators */
+-.commit-card.merge-commit rect {
+-  stroke-width: 2;
+-  stroke-dasharray: 4 2;
+-}
+-
+-.commit-card.tagged-commit rect {
+-  stroke-width: 2.5;
+-}
+-
+-
+-/* Railway-style Dark Inspector Panel - Overlay */
+-.devtree-overlay {
+-  position: absolute;
+-  top: 0;
+-  left: 0;
+-  right: 0;
+-  bottom: 0;
+-  background: rgba(0, 0, 0, 0.7);
+-  z-index: 999;
+-  opacity: 0;
+-  visibility: hidden;
+-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+-  cursor: pointer;
+-}
+-
+-.devtree-overlay.active {
+-  opacity: 1;
+-  visibility: visible;
+-}
+-
+-/* Railway-style Dark Inspector Panel - Slide-out */
+-.devtree-panel {
+-  position: absolute;
+-  top: 0;
+-  right: -480px;
+-  width: 480px;
+-  max-width: 100%;
+-  height: 100%;
+-  background: #0f0f0f;
+-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+-  z-index: 1000;
+-  overflow-y: auto;
+-  overflow-x: hidden;
+-  transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+-}
+-
+-.devtree-panel.active {
+-  right: 0;
+-}
+-
+-/* Custom scrollbar for panel */
+-.devtree-panel::-webkit-scrollbar {
+-  width: 8px;
+-}
+-
+-.devtree-panel::-webkit-scrollbar-track {
+-  background: rgba(0, 0, 0, 0.3);
+-}
+-
+-.devtree-panel::-webkit-scrollbar-thumb {
+-  background: rgba(255, 255, 255, 0.2);
+-  border-radius: 0;
+-}
+-
+-.devtree-panel::-webkit-scrollbar-thumb:hover {
+-  background: rgba(255, 255, 255, 0.3);
+-}
+-
+-.devtree-panel .close-panel {
+-  position: absolute;
+-  top: 16px;
+-  right: 16px;
+-  font-size: 20px;
+-  padding: 0;
+-  width: 24px;
+-  height: 24px;
+-  line-height: 1;
+-  border-radius: 0;
+-  transition: all 0.2s ease;
+-  background: transparent;
+-  border: none;
+-  cursor: pointer;
+-  color: rgba(255, 255, 255, 0.4);
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  z-index: 10;
+-  font-weight: 300;
+-}
+-
+-.devtree-panel .close-panel:hover {
+-  color: #fb7185;
+-  transform: scale(1.1);
+-}
+-
+-.devtree-panel .panel-content {
+-  padding: 24px;
+-  padding-top: 60px;
+-}
+-
+-.devtree-panel .loading {
+-  text-align: center;
+-  padding: 60px 20px;
+-  color: rgba(255, 255, 255, 0.5);
+-  font-size: 14px;
+-}
+-
+-/* Panel content sections - Railway dark cards */
+-.commit-section {
+-  margin-bottom: 16px;
+-  background: rgba(255, 255, 255, 0.03);
+-  padding: 20px;
+-  border-radius: 0;
+-  border: 1px solid rgba(255, 255, 255, 0.1);
+-  transition: background 0.2s ease, border-color 0.2s ease;
+-}
+-
+-.commit-section:hover {
+-  background: rgba(255, 255, 255, 0.05);
+-  border-color: rgba(255, 255, 255, 0.15);
+-}
+-
+-.commit-section:last-child {
+-  margin-bottom: 0;
+-}
+-
+-.commit-section h4 {
+-  margin: 0 0 14px 0;
+-  color: rgba(255, 255, 255, 0.5);
+-  font-size: 10px;
+-  text-transform: uppercase;
+-  font-weight: 700;
+-  letter-spacing: 0.1em;
+-}
+-
+-/* Compact metadata section */
+-.commit-metadata {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 14px;
+-}
+-
+-.commit-sha-line {
+-  display: flex;
+-  align-items: center;
+-  gap: 10px;
+-  font-size: 12px;
+-}
+-
+-.sha-label {
+-  color: rgba(255, 255, 255, 0.45);
+-  font-weight: 600;
+-  font-size: 11px;
+-  text-transform: uppercase;
+-  letter-spacing: 0.05em;
+-}
+-
+-.commit-sha-link {
+-  flex: 1;
+-  text-decoration: none;
+-  display: block;
+-}
+-
+-.commit-sha-link:hover .commit-sha-code {
+-  background: rgba(167, 139, 250, 0.2);
+-  border-color: rgba(167, 139, 250, 0.5);
+-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.1);
+-}
+-
+-.commit-sha-code {
+-  font-family: var(--fonts-monospace);
+-  background: rgba(0, 0, 0, 0.4);
+-  padding: 6px 10px;
+-  border: 1px solid rgba(255, 255, 255, 0.12);
+-  font-size: 11px;
+-  color: #b4a0ff;
+-  word-break: break-all;
+-  display: block;
+-  transition: all 0.2s ease;
+-}
+-
+-.commit-stats-inline {
+-  display: flex;
+-  gap: 16px;
+-  font-size: 13px;
+-  align-items: center;
+-  padding: 8px 12px;
+-  background: rgba(0, 0, 0, 0.3);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  border-left: 2px solid rgba(167, 139, 250, 0.3);
+-}
+-
+-.stat-item {
+-  color: rgba(255, 255, 255, 0.7);
+-  font-size: 12px;
+-}
+-
+-.stat-item.additions {
+-  color: #4ade80;
+-  font-weight: 600;
+-}
+-
+-.stat-item.deletions {
+-  color: #fb7185;
+-  font-weight: 600;
+-}
+-
+-.commit-author-info {
+-  display: flex;
+-  align-items: center;
+-  gap: 16px;
+-  padding: 6px 0;
+-}
+-
+-.commit-author-info img {
+-  width: 44px;
+-  height: 44px;
+-  border-radius: 50%;
+-  border: 2px solid rgba(167, 139, 250, 0.3);
+-  transition: border-color 0.2s ease;
+-}
+-
+-.commit-author-info:hover img {
+-  border-color: rgba(167, 139, 250, 0.5);
+-}
+-
+-.commit-author-details {
+-  flex: 1;
+-}
+-
+-.commit-author-details .name {
+-  font-weight: 600;
+-  display: block;
+-  font-size: 15px;
+-  margin-bottom: 4px;
+-  color: #f5f5f5;
+-  letter-spacing: -0.01em;
+-}
+-
+-.commit-author-details .email {
+-  font-size: 12px;
+-  color: rgba(255, 255, 255, 0.55);
+-  display: block;
+-  font-family: var(--fonts-monospace);
+-}
+-
+-.commit-author-details .date {
+-  font-size: 12px;
+-  color: rgba(255, 255, 255, 0.45);
+-  display: block;
+-  margin-top: 6px;
+-}
+-
+-/* Commit message section - no header */
+-.commit-message-section {
+-  background: transparent;
+-  border: none;
+-  padding: 8px 0;
+-}
+-
+-.commit-message-title-link {
+-  text-decoration: none;
+-  display: block;
+-  margin-bottom: 12px;
+-  transition: all 0.2s ease;
+-  padding: 2px 0;
+-}
+-
+-.commit-message-title-link:hover {
+-  opacity: 0.85;
+-}
+-
+-.commit-message-title-link:hover .commit-message-title {
+-  color: #b4a0ff;
+-}
+-
+-.commit-message-title {
+-  font-size: 19px;
+-  font-weight: 600;
+-  color: #f5f5f5;
+-  line-height: 1.5;
+-  letter-spacing: -0.02em;
+-  transition: color 0.2s ease;
+-}
+-
+-.commit-message-body {
+-  white-space: pre-wrap;
+-  font-family: var(--fonts-regular);
+-  font-size: 14px;
+-  line-height: 1.7;
+-  color: rgba(255, 255, 255, 0.75);
+-  padding-left: 12px;
+-  border-left: 2px solid rgba(255, 255, 255, 0.1);
+-}
+-
+-/* Files section */
+-.commit-files-section {
+-  max-height: none;
+-}
+-
+-.commit-files-list {
+-  display: flex;
+-  flex-direction: column;
+-  gap: 8px;
+-}
+-
+-.file-item {
+-  background: rgba(0, 0, 0, 0.3);
+-  border: 1px solid rgba(255, 255, 255, 0.1);
+-  padding: 0;
+-  transition: all 0.2s ease;
+-}
+-
+-.file-item:hover {
+-  border-color: rgba(255, 255, 255, 0.2);
+-  background: rgba(0, 0, 0, 0.4);
+-}
+-
+-.file-header {
+-  display: flex;
+-  align-items: center;
+-  gap: 10px;
+-  padding: 12px 14px;
+-  font-family: var(--fonts-monospace);
+-  font-size: 12px;
+-  transition: background 0.15s ease;
+-}
+-
+-.file-header:hover {
+-  background: rgba(255, 255, 255, 0.04);
+-}
+-
+-.view-diff-btn {
+-  background: rgba(255, 255, 255, 0.03);
+-  border: 1px solid rgba(255, 255, 255, 0.15);
+-  color: rgba(255, 255, 255, 0.5);
+-  cursor: pointer;
+-  padding: 5px 7px;
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  border-radius: 0;
+-  transition: all 0.2s ease;
+-  margin-left: 8px;
+-}
+-
+-.view-diff-btn:hover {
+-  background: rgba(255, 255, 255, 0.08);
+-  color: rgba(255, 255, 255, 0.9);
+-  border-color: rgba(255, 255, 255, 0.3);
+-  transform: translateY(-1px);
+-}
+-
+-.view-diff-btn.active {
+-  background: rgba(167, 139, 250, 0.25);
+-  color: #b4a0ff;
+-  border-color: rgba(167, 139, 250, 0.6);
+-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2);
+-}
+-
+-.file-status {
+-  display: inline-flex;
+-  align-items: center;
+-  justify-content: center;
+-  width: 24px;
+-  height: 24px;
+-  border-radius: 0;
+-  font-weight: 700;
+-  font-size: 11px;
+-  flex-shrink: 0;
+-}
+-
+-.file-status.added {
+-  background: #dcffe4;
+-  color: #22863a;
+-}
+-
+-.file-status.modified {
+-  background: #fff5b1;
+-  color: #735c0f;
+-}
+-
+-.file-status.deleted {
+-  background: #ffdce0;
+-  color: #cb2431;
+-}
+-
+-.file-path {
+-  flex: 1;
+-  overflow: hidden;
+-  text-overflow: ellipsis;
+-  color: rgba(255, 255, 255, 0.9);
+-}
+-
+-.file-changes {
+-  display: flex;
+-  gap: 8px;
+-  font-size: 11px;
+-  margin-left: auto;
+-}
+-
+-.file-changes .additions {
+-  color: #4ade80;
+-  font-weight: 600;
+-}
+-
+-.file-changes .deletions {
+-  color: #fb7185;
+-  font-weight: 600;
+-}
+-
+-/* Diff viewer */
+-.file-diff {
+-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+-  background: rgba(0, 0, 0, 0.6);
+-  max-height: 400px;
+-  overflow-y: auto;
+-  animation: slideDown 0.2s ease;
+-}
+-
+-@keyframes slideDown {
+-  from {
+-    opacity: 0;
+-    max-height: 0;
+-  }
+-  to {
+-    opacity: 1;
+-    max-height: 400px;
+-  }
+-}
+-
+-.file-diff::-webkit-scrollbar {
+-  width: 6px;
+-  height: 6px;
+-}
+-
+-.file-diff::-webkit-scrollbar-track {
+-  background: rgba(0, 0, 0, 0.3);
+-}
+-
+-.file-diff::-webkit-scrollbar-thumb {
+-  background: rgba(255, 255, 255, 0.2);
+-  border-radius: 0;
+-}
+-
+-.diff-loading,
+-.diff-error {
+-  padding: 20px;
+-  text-align: center;
+-  color: rgba(255, 255, 255, 0.5);
+-  font-size: 13px;
+-}
+-
+-.diff-error {
+-  color: #f85149;
+-}
+-
+-.diff-view {
+-  font-family: var(--fonts-monospace);
+-  font-size: 12px;
+-  line-height: 1.5;
+-}
+-
+-.diff-line {
+-  padding: 2px 8px;
+-  white-space: pre;
+-  overflow-x: auto;
+-}
+-
+-.diff-line code {
+-  font-family: inherit;
+-  background: none;
+-  padding: 0;
+-}
+-
+-.diff-header {
+-  color: rgba(255, 255, 255, 0.5);
+-  background: rgba(255, 255, 255, 0.03);
+-  font-weight: 600;
+-}
+-
+-.diff-hunk {
+-  color: #58a6ff;
+-  background: rgba(88, 166, 255, 0.1);
+-  font-weight: 600;
+-}
+-
+-.diff-addition {
+-  background: rgba(74, 222, 128, 0.12);
+-  color: #4ade80;
+-}
+-
+-.diff-addition::before {
+-  content: '+';
+-  color: #4ade80;
+-  margin-right: 4px;
+-  font-weight: 600;
+-}
+-
+-.diff-deletion {
+-  background: rgba(251, 113, 133, 0.12);
+-  color: #fb7185;
+-}
+-
+-.diff-deletion::before {
+-  content: '-';
+-  color: #fb7185;
+-  margin-right: 4px;
+-  font-weight: 600;
+-}
+-
+-.diff-context {
+-  color: rgba(255, 255, 255, 0.7);
+-}
+-
+-.diff-context::before {
+-  content: ' ';
+-  margin-right: 4px;
+-}
+-
+-/* Responsive design */
+-@media (max-width: 767px) {
+-  .devtree-panel {
+-    width: 100%;
+-    right: -100%;
+-  }
+-
+-  #devtree-canvas {
+-    height: 100vh;
+-  }
+-
+-  .commit-section {
+-    padding: 16px;
+-  }
+-
+-  .devtree-panel .panel-content {
+-    padding: 20px;
+-  }
+-
+-  .zoom-controls {
+-    top: 10px;
+-    left: 10px;
+-  }
+-}
+-
+-@media (min-width: 768px) and (max-width: 1024px) {
+-  .devtree-panel {
+-    width: 420px;
+-  }
+-}
+-
+-/* Loading and error states */
+-#loading {
+-  text-align: center;
+-  padding: 100px 0;
+-}
+-
+-#error {
+-  margin: 20px;
+-  border-radius: 0;
+-}
+-
+-/* Floating Action Button */
+-.devtree-fab {
+-  position: fixed;
+-  bottom: 30px;
+-  right: 30px;
+-  z-index: 900;
+-}
+-
+-.devtree-fab > button {
+-  width: 56px;
+-  height: 56px;
+-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+-  transition: all 0.3s ease;
+-}
+-
+-.devtree-fab > button:hover {
+-  transform: scale(1.1);
+-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+-}
+-
+-.devtree-fab .fab-menu {
+-  position: absolute;
+-  bottom: 70px;
+-  right: 0;
+-  background: rgba(0, 0, 0, 0.9);
+-  border: 1px solid rgba(255, 255, 255, 0.2);
+-  border-radius: 8px;
+-  padding: 8px;
+-  min-width: 200px;
+-  backdrop-filter: blur(8px);
+-}
+-
+-.fab-menu-item {
+-  display: block;
+-  width: 100%;
+-  padding: 12px 16px;
+-  background: transparent;
+-  border: none;
+-  color: rgba(255, 255, 255, 0.9);
+-  text-align: left;
+-  cursor: pointer;
+-  border-radius: 4px;
+-  transition: background 0.2s ease;
+-  margin-bottom: 4px;
+-  font-size: 14px;
+-}
+-
+-.fab-menu-item:last-child {
+-  margin-bottom: 0;
+-}
+-
+-.fab-menu-item:hover {
+-  background: rgba(255, 255, 255, 0.1);
+-}
+-
+-.fab-menu-item i {
+-  margin-right: 8px;
+-}
+-
+-/* Agent Status Badge */
+-.agent-status-badge {
+-  position: absolute;
+-  top: 80px;
+-  left: 20px;
+-  background: rgba(0, 0, 0, 0.85);
+-  border: 1px solid rgba(255, 255, 255, 0.2);
+-  padding: 12px 20px;
+-  border-radius: 20px;
+-  display: flex;
+-  align-items: center;
+-  gap: 12px;
+-  z-index: 100;
+-  backdrop-filter: blur(8px);
+-  transition: all 0.3s ease;
+-}
+-
+-.agent-status-badge .status-icon {
+-  width: 12px;
+-  height: 12px;
+-  border-radius: 50%;
+-  background: #4ade80;
+-  animation: pulse-status 2s infinite;
+-  flex-shrink: 0;
+-}
+-
+-.agent-status-badge.status-idle .status-icon {
+-  background: #6b7280;
+-  animation: none;
+-}
+-
+-.agent-status-badge.status-analyzing .status-icon {
+-  background: #60a5fa;
+-}
+-
+-.agent-status-badge.status-coding .status-icon {
+-  background: #a78bfa;
+-}
+-
+-.agent-status-badge.status-testing .status-icon {
+-  background: #fbbf24;
+-}
+-
+-.agent-status-badge.status-creating-pr .status-icon {
+-  background: #34d399;
+-}
+-
+-.agent-status-badge.status-completed .status-icon {
+-  background: #22c55e;
+-  animation: none;
+-}
+-
+-.agent-status-badge.status-error .status-icon {
+-  background: #ef4444;
+-  animation: none;
+-}
+-
+-.agent-status-badge .status-text {
+-  color: rgba(255, 255, 255, 0.9);
+-  font-size: 13px;
+-  font-weight: 600;
+-  min-width: 120px;
+-}
+-
+-.agent-status-badge .progress-bar {
+-  width: 80px;
+-  height: 6px;
+-  background: rgba(255, 255, 255, 0.2);
+-  border-radius: 3px;
+-  overflow: hidden;
+-}
+-
+-.agent-status-badge .progress-bar-fill {
+-  height: 100%;
+-  background: linear-gradient(90deg, #4ade80, #22c55e);
+-  transition: width 0.5s ease;
+-}
+-
+-@keyframes pulse-status {
+-  0%, 100% { opacity: 1; }
+-  50% { opacity: 0.5; }
+-}
+-
+-/* Active Agent on Graph */
+-.commit-card.agent-active rect {
+-  stroke-width: 3;
+-  stroke: #00ff88 !important;
+-  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.6));
+-  animation: pulse-agent 2s infinite;
+-}
+-
+-@keyframes pulse-agent {
+-  0%, 100% { opacity: 1; }
+-  50% { opacity: 0.7; }
+-}
+-
+-/* PR Review Panel (left side) */
+-.pr-review-overlay {
+-  position: absolute;
+-  top: 0;
+-  left: 0;
+-  right: 0;
+-  bottom: 0;
+-  background: rgba(0, 0, 0, 0.7);
+-  z-index: 999;
+-  opacity: 0;
+-  visibility: hidden;
+-  transition: all 0.3s ease;
+-  cursor: pointer;
+-}
+-
+-.pr-review-overlay.active {
+-  opacity: 1;
+-  visibility: visible;
+-}
+-
+-.pr-review-panel {
+-  position: absolute;
+-  top: 0;
+-  left: -500px;
+-  width: 500px;
+-  max-width: 100%;
+-  height: 100%;
+-  background: #0f0f0f;
+-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+-  z-index: 1000;
+-  overflow-y: auto;
+-  overflow-x: hidden;
+-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+-}
+-
+-.pr-review-panel.active {
+-  left: 0;
+-}
+-
+-.pr-review-panel::-webkit-scrollbar {
+-  width: 8px;
+-}
+-
+-.pr-review-panel::-webkit-scrollbar-track {
+-  background: rgba(0, 0, 0, 0.3);
+-}
+-
+-.pr-review-panel::-webkit-scrollbar-thumb {
+-  background: rgba(255, 255, 255, 0.2);
+-  border-radius: 0;
+-}
+-
+-.pr-review-panel::-webkit-scrollbar-thumb:hover {
+-  background: rgba(255, 255, 255, 0.3);
+-}
+-
+-.pr-review-panel .close-panel {
+-  position: absolute;
+-  top: 16px;
+-  right: 16px;
+-  font-size: 20px;
+-  padding: 0;
+-  width: 24px;
+-  height: 24px;
+-  line-height: 1;
+-  border-radius: 0;
+-  transition: all 0.2s ease;
+-  background: transparent;
+-  border: none;
+-  cursor: pointer;
+-  color: rgba(255, 255, 255, 0.4);
+-  display: flex;
+-  align-items: center;
+-  justify-content: center;
+-  z-index: 10;
+-  font-weight: 300;
+-}
+-
+-.pr-review-panel .close-panel:hover {
+-  color: #fb7185;
+-  transform: scale(1.1);
+-}
+-
+-.pr-review-panel .panel-content {
+-  padding: 24px;
+-  padding-top: 60px;
+-}
+-
+-.pr-review-section {
+-  margin-bottom: 20px;
+-  background: rgba(255, 255, 255, 0.03);
+-  padding: 20px;
+-  border: 1px solid rgba(255, 255, 255, 0.1);
+-  transition: background 0.2s ease, border-color 0.2s ease;
+-}
+-
+-.pr-review-section:hover {
+-  background: rgba(255, 255, 255, 0.05);
+-  border-color: rgba(255, 255, 255, 0.15);
+-}
+-
+-.pr-review-section h4 {
+-  margin: 0 0 14px 0;
+-  color: rgba(255, 255, 255, 0.5);
+-  font-size: 10px;
+-  text-transform: uppercase;
+-  font-weight: 700;
+-  letter-spacing: 0.1em;
+-}
+-
+-.pr-title {
+-  font-size: 20px;
+-  font-weight: 600;
+-  color: #f5f5f5;
+-  margin-bottom: 8px;
+-}
+-
+-.pr-number {
+-  color: rgba(255, 255, 255, 0.5);
+-  font-size: 14px;
+-}
+-
+-.pr-state {
+-  display: inline-block;
+-  padding: 4px 12px;
+-  border-radius: 12px;
+-  font-size: 12px;
+-  font-weight: 600;
+-  margin-left: 8px;
+-}
+-
+-.pr-state.open {
+-  background: rgba(34, 197, 94, 0.2);
+-  color: #4ade80;
+-}
+-
+-.pr-state.closed {
+-  background: rgba(239, 68, 68, 0.2);
+-  color: #fb7185;
+-}
+-
+-.pr-state.merged {
+-  background: rgba(139, 92, 246, 0.2);
+-  color: #a78bfa;
+-}
+-
+-.pr-meta-line {
+-  font-size: 13px;
+-  color: rgba(255, 255, 255, 0.7);
+-  margin-bottom: 6px;
+-}
+-
+-.pr-meta-line strong {
+-  color: rgba(255, 255, 255, 0.9);
+-}
+-
+-.pr-commit-list {
+-  list-style: none;
+-  padding: 0;
+-  margin: 0;
+-}
+-
+-.pr-commit-item {
+-  padding: 10px;
+-  background: rgba(0, 0, 0, 0.3);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  margin-bottom: 6px;
+-  font-family: var(--fonts-monospace);
+-  font-size: 12px;
+-  color: rgba(255, 255, 255, 0.8);
+-  transition: background 0.2s ease;
+-}
+-
+-.pr-commit-item:hover {
+-  background: rgba(0, 0, 0, 0.4);
+-}
+-
+-.pr-commit-sha {
+-  color: #b4a0ff;
+-  margin-right: 8px;
+-}
+-
+-.pr-file-list {
+-  list-style: none;
+-  padding: 0;
+-  margin: 0;
+-}
+-
+-.pr-file-item {
+-  padding: 8px 12px;
+-  background: rgba(0, 0, 0, 0.3);
+-  border: 1px solid rgba(255, 255, 255, 0.08);
+-  margin-bottom: 4px;
+-  font-family: var(--fonts-monospace);
+-  font-size: 12px;
+-  display: flex;
+-  align-items: center;
+-  gap: 8px;
+-}
+-
+-.pr-file-status {
+-  display: inline-flex;
+-  align-items: center;
+-  justify-content: center;
+-  width: 20px;
+-  height: 20px;
+-  border-radius: 3px;
+-  font-weight: 700;
+-  font-size: 10px;
+-  flex-shrink: 0;
+-}
+-
+-.pr-file-status.added {
+-  background: #dcffe4;
+-  color: #22863a;
+-}
+-
+-.pr-file-status.modified {
+-  background: #fff5b1;
+-  color: #735c0f;
+-}
+-
+-.pr-file-status.deleted {
+-  background: #ffdce0;
+-  color: #cb2431;
+-}
+-
+-.pr-file-name {
+-  flex: 1;
+-  color: rgba(255, 255, 255, 0.9);
+-}
+-
+-.pr-review-actions {
+-  display: flex;
+-  gap: 8px;
+-  margin-top: 16px;
+-  flex-wrap: wrap;
+-}
+-
+-.pr-review-actions button {
+-  flex: 1;
+-  min-width: 100px;
+-  font-size: 12px;
+-}
+-
+-.pr-review-comment-form {
+-  margin-top: 16px;
+-}
+-
+-.pr-review-comment-form textarea {
+-  width: 100%;
+-  min-height: 80px;
+-  background: rgba(0, 0, 0, 0.4);
+-  border: 1px solid rgba(255, 255, 255, 0.15);
+-  color: rgba(255, 255, 255, 0.9);
+-  padding: 10px;
+-  font-size: 13px;
+-  resize: vertical;
+-}
+-
+-/* Modal improvements for devtree */
+-#create-issue-modal .ui.form .field.required > label::after,
+-#deploy-agent-modal .ui.form .field.required > label::after {
+-  content: '*';
+-  color: #ef4444;
+-  margin-left: 4px;
+-}
+-
+-/* Responsive adjustments */
+-@media (max-width: 767px) {
+-  .devtree-fab {
+-    bottom: 15px;
+-    right: 15px;
+-  }
+-
+-  .devtree-fab > button {
+-    width: 48px;
+-    height: 48px;
+-  }
+-
+-  .agent-status-badge {
+-    top: 60px;
+-    left: 10px;
+-    padding: 8px 12px;
+-  }
+-
+-  .agent-status-badge .status-text {
+-    font-size: 11px;
+-    min-width: 80px;
+-  }
+-
+-  .agent-status-badge .progress-bar {
+-    width: 60px;
+-  }
+-
+-  .pr-review-panel {
+-    width: 100%;
+-    left: -100%;
+-  }
+-}
+diff --git a/web_src/css/repo.css b/web_src/css/repo.css
+index 46b4b32934..4234c07bf0 100644
+--- a/web_src/css/repo.css
++++ b/web_src/css/repo.css
+@@ -2759,22 +2759,3 @@ tbody.commit-list {
+ #repo-activity-top-authors-chart {
+   height: 150px; /* Pre-allocate the height that will be taken up by the chart, to avoid the container 'jumping'. */
+ }
+-
+-/* Dev Tree */
+-.repository.devtree #devtree-container {
+-  width: 100%;
+-  height: 700px;
+-  border: 1px solid #d4d4d5;
+-  background: #ffffff;
+-  margin-top: 1rem;
+-}
+-
+-.repository.devtree .ui.secondary.menu {
+-  margin-bottom: 0;
+-}
+-
+-/* Dark mode */
+-body[data-theme="dark"] .repository.devtree #devtree-container {
+-  background: #1b1c1d;
+-  border-color: #3d3e3f;
+-}
+diff --git a/web_src/js/features/repo-devtree-agent.js b/web_src/js/features/repo-devtree-agent.js
+deleted file mode 100644
+index d7f55d9833..0000000000
+--- a/web_src/js/features/repo-devtree-agent.js
++++ /dev/null
+@@ -1,602 +0,0 @@
+-import {GET, POST} from '../modules/fetch.js';
+-import {showErrorToast, showInfoToast} from '../modules/toast.js';
+-import $ from 'jquery';
+-
+-let globalOwner = null;
+-let globalRepo = null;
+-let selectedCommitSHA = null;
+-let currentAgent = null;
+-
+-// Agent state configuration
+-const AGENT_STATES = {
+-  ANALYZING: {
+-    name: 'analyzing',
+-    message: 'Analyzing requirements...',
+-    duration: [10000, 30000], // 10-30 seconds
+-    progress: [0, 20],
+-  },
+-  CODING: {
+-    name: 'coding',
+-    message: 'Implementing feature...',
+-    duration: [30000, 120000], // 30-120 seconds
+-    progress: [20, 70],
+-    commits: [2, 5], // Generate 2-5 mock commits
+-  },
+-  TESTING: {
+-    name: 'testing',
+-    message: 'Running tests...',
+-    duration: [10000, 20000],
+-    progress: [70, 90],
+-  },
+-  CREATING_PR: {
+-    name: 'creating-pr',
+-    message: 'Creating pull request...',
+-    duration: [5000, 10000],
+-    progress: [90, 100],
+-  },
+-  COMPLETED: {
+-    name: 'completed',
+-    message: 'Completed',
+-    progress: [100, 100],
+-  },
+-  ERROR: {
+-    name: 'error',
+-    message: 'Error occurred',
+-    progress: [0, 0],
+-  },
+-};
+-
+-// Speed multipliers
+-const SPEED_MULTIPLIERS = {
+-  fast: 0.1,
+-  normal: 1.0,
+-  slow: 2.0,
+-};
+-
+-// Mock commit templates
+-const COMMIT_TEMPLATES = [
+-  'Implement {feature} functionality',
+-  'Add {feature} module',
+-  'Refactor {feature} for better performance',
+-  'Fix {feature} bug',
+-  'Update {feature} tests',
+-];
+-
+-const EXPLANATION_TEMPLATES = [
+-  'This commit implements the core logic for {feature}. The approach uses modern patterns and best practices to ensure maintainability.',
+-  'Added a new module to handle {feature} operations. Key features include proper error handling and comprehensive test coverage.',
+-  'Refactored the {feature} component to improve code readability and reduce complexity. This makes future maintenance easier.',
+-  'Fixed a critical bug in {feature} that was causing unexpected behavior. Added regression tests to prevent similar issues.',
+-  'Updated test coverage for {feature} to ensure reliability and catch edge cases early in development.',
+-];
+-
+-export function initDevTreeAgent(owner, repo) {
+-  globalOwner = owner;
+-  globalRepo = repo;
+-
+-  setupFAB();
+-  setupModals();
+-}
+-
+-export function setSelectedCommit(sha) {
+-  selectedCommitSHA = sha;
+-}
+-
+-function setupFAB() {
+-  const fabButton = document.getElementById('fab-main-button');
+-  const fabMenu = document.querySelector('.fab-menu');
+-
+-  if (!fabButton || !fabMenu) return;
+-
+-  // Toggle FAB menu
+-  fabButton.addEventListener('click', (e) => {
+-    e.stopPropagation();
+-    const isVisible = fabMenu.style.display !== 'none';
+-    fabMenu.style.display = isVisible ? 'none' : 'block';
+-  });
+-
+-  // Close menu when clicking outside
+-  document.addEventListener('click', (e) => {
+-    if (!e.target.closest('.devtree-fab')) {
+-      fabMenu.style.display = 'none';
+-    }
+-  });
+-
+-  // Handle menu item clicks
+-  document.querySelectorAll('.fab-menu-item').forEach((item) => {
+-    item.addEventListener('click', (e) => {
+-      const action = e.currentTarget.getAttribute('data-action');
+-      fabMenu.style.display = 'none';
+-
+-      if (action === 'create-issue') {
+-        openCreateIssueModal();
+-      } else if (action === 'deploy-agent') {
+-        openDeployAgentModal();
+-      }
+-    });
+-  });
+-}
+-
+-function setupModals() {
+-  // Create Issue Modal
+-  const createIssueModal = $('#create-issue-modal');
+-  const createIssueSubmit = document.getElementById('create-issue-submit');
+-
+-  if (createIssueSubmit) {
+-    createIssueSubmit.addEventListener('click', async () => {
+-      await handleCreateIssue();
+-    });
+-  }
+-
+-  // Deploy Agent Modal
+-  const deployAgentModal = $('#deploy-agent-modal');
+-  const deployAgentSubmit = document.getElementById('deploy-agent-submit');
+-
+-  if (deployAgentSubmit) {
+-    deployAgentSubmit.addEventListener('click', async () => {
+-      await handleDeployAgent();
+-    });
+-  }
+-}
+-
+-async function openCreateIssueModal() {
+-  if (!selectedCommitSHA) {
+-    showErrorToast('Please select a commit from the graph first');
+-    return;
+-  }
+-
+-  // Set the base SHA
+-  document.getElementById('issue-base-sha').value = selectedCommitSHA;
+-
+-  // Load assignees, labels, and milestones
+-  await Promise.all([
+-    loadAssignees(),
+-    loadLabels(),
+-    loadMilestones(),
+-  ]);
+-
+-  // Show modal
+-  $('#create-issue-modal').modal('show');
+-}
+-
+-async function loadAssignees() {
+-  try {
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/collaborators`);
+-    const collaborators = await response.json();
+-
+-    const dropdown = $('#issue-assignees');
+-    const menu = dropdown.find('.menu');
+-    menu.empty();
+-
+-    collaborators.forEach((user) => {
+-      menu.append(`<div class="item" data-value="${user.login}">${user.login}</div>`);
+-    });
+-
+-    dropdown.dropdown();
+-  } catch (error) {
+-    console.error('Failed to load assignees:', error);
+-  }
+-}
+-
+-async function loadLabels() {
+-  try {
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/labels`);
+-    const labels = await response.json();
+-
+-    const dropdown = $('#issue-labels');
+-    const menu = dropdown.find('.menu');
+-    menu.empty();
+-
+-    labels.forEach((label) => {
+-      menu.append(`<div class="item" data-value="${label.id}">${label.name}</div>`);
+-    });
+-
+-    dropdown.dropdown();
+-  } catch (error) {
+-    console.error('Failed to load labels:', error);
+-  }
+-}
+-
+-async function loadMilestones() {
+-  try {
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/milestones`);
+-    const milestones = await response.json();
+-
+-    const dropdown = $('#issue-milestone');
+-    const menu = dropdown.find('.menu');
+-    menu.empty();
+-
+-    milestones.forEach((milestone) => {
+-      menu.append(`<div class="item" data-value="${milestone.id}">${milestone.title}</div>`);
+-    });
+-
+-    dropdown.dropdown();
+-  } catch (error) {
+-    console.error('Failed to load milestones:', error);
+-  }
+-}
+-
+-async function handleCreateIssue() {
+-  const form = document.getElementById('create-issue-form');
+-  const formData = new FormData(form);
+-
+-  const title = formData.get('title');
+-  if (!title) {
+-    showErrorToast('Title is required');
+-    return;
+-  }
+-
+-  const assignees = $('#issue-assignees').dropdown('get value');
+-  const labels = $('#issue-labels').dropdown('get value');
+-  const milestone = $('#issue-milestone').dropdown('get value');
+-
+-  const issueData = {
+-    title: title,
+-    body: formData.get('body') || '',
+-  };
+-
+-  if (assignees) {
+-    issueData.assignees = assignees.split(',').filter((a) => a);
+-  }
+-
+-  if (labels) {
+-    issueData.labels = labels.split(',').map((id) => parseInt(id)).filter((id) => !isNaN(id));
+-  }
+-
+-  if (milestone) {
+-    issueData.milestone = parseInt(milestone);
+-  }
+-
+-  try {
+-    const response = await POST(`/api/v1/repos/${globalOwner}/${globalRepo}/issues`, {
+-      data: issueData,
+-    });
+-
+-    if (!response.ok) {
+-      const error = await response.json();
+-      throw new Error(error.message || 'Failed to create issue');
+-    }
+-
+-    const issue = await response.json();
+-    showInfoToast(`Issue #${issue.number} created successfully`);
+-    $('#create-issue-modal').modal('hide');
+-    form.reset();
+-  } catch (error) {
+-    console.error('Error creating issue:', error);
+-    showErrorToast(error.message);
+-  }
+-}
+-
+-async function openDeployAgentModal() {
+-  if (!selectedCommitSHA) {
+-    showErrorToast('Please select a commit from the graph first');
+-    return;
+-  }
+-
+-  // Set the base SHA
+-  document.getElementById('agent-base-sha').value = selectedCommitSHA;
+-
+-  // Load open issues
+-  await loadOpenIssues();
+-
+-  // Initialize dropdowns
+-  $('#agent-issue').dropdown();
+-  $('#agent-speed').dropdown();
+-
+-  // Show modal
+-  $('#deploy-agent-modal').modal('show');
+-}
+-
+-async function loadOpenIssues() {
+-  try {
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/issues?state=open&type=issues`);
+-    const issues = await response.json();
+-
+-    const dropdown = $('#agent-issue');
+-    const menu = dropdown.find('.menu');
+-    menu.empty();
+-
+-    if (issues.length === 0) {
+-      menu.append('<div class="item disabled">No open issues</div>');
+-    } else {
+-      issues.forEach((issue) => {
+-        menu.append(`<div class="item" data-value="${issue.number}">#${issue.number} - ${issue.title}</div>`);
+-      });
+-    }
+-
+-    dropdown.dropdown();
+-  } catch (error) {
+-    console.error('Failed to load issues:', error);
+-    showErrorToast('Failed to load open issues');
+-  }
+-}
+-
+-async function handleDeployAgent() {
+-  const issueId = $('#agent-issue').dropdown('get value');
+-  const baseSha = document.getElementById('agent-base-sha').value;
+-  const speed = $('#agent-speed').dropdown('get value') || 'normal';
+-
+-  if (!issueId) {
+-    showErrorToast('Please select an issue');
+-    return;
+-  }
+-
+-  if (!baseSha) {
+-    showErrorToast('Base commit SHA is required');
+-    return;
+-  }
+-
+-  // Get issue details for title
+-  let issueTitle = 'Unknown Issue';
+-  try {
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/issues/${issueId}`);
+-    const issue = await response.json();
+-    issueTitle = issue.title;
+-  } catch (error) {
+-    console.error('Failed to get issue details:', error);
+-  }
+-
+-  $('#deploy-agent-modal').modal('hide');
+-
+-  // Start agent simulation
+-  startAgentSimulation(issueId, issueTitle, baseSha, speed);
+-}
+-
+-function startAgentSimulation(issueId, issueTitle, baseSha, speed) {
+-  if (currentAgent) {
+-    showErrorToast('An agent is already running. Please wait for it to complete.');
+-    return;
+-  }
+-
+-  const speedMultiplier = SPEED_MULTIPLIERS[speed] || 1.0;
+-
+-  currentAgent = {
+-    issueId,
+-    issueTitle,
+-    baseSha,
+-    speed: speedMultiplier,
+-    state: null,
+-    progress: 0,
+-    commits: [],
+-    timers: [],
+-  };
+-
+-  showInfoToast(`Agent deployed for issue #${issueId}`);
+-  transitionToState(AGENT_STATES.ANALYZING);
+-}
+-
+-function transitionToState(state) {
+-  if (!currentAgent) return;
+-
+-  currentAgent.state = state.name;
+-  const [minProgress, maxProgress] = state.progress;
+-  currentAgent.progress = minProgress;
+-
+-  updateStatusBadge(state.name, minProgress, state.message);
+-
+-  if (state.name === 'completed') {
+-    handleAgentCompleted();
+-    return;
+-  }
+-
+-  if (state.name === 'error') {
+-    handleAgentError('Simulation error');
+-    return;
+-  }
+-
+-  // Schedule state progression
+-  if (state.duration) {
+-    const [minDuration, maxDuration] = state.duration;
+-    const duration = Math.random() * (maxDuration - minDuration) + minDuration;
+-    const scaledDuration = duration * currentAgent.speed;
+-
+-    // Animate progress
+-    const progressIncrement = (maxProgress - minProgress) / 10;
+-    const progressInterval = scaledDuration / 10;
+-
+-    const progressTimer = setInterval(() => {
+-      if (!currentAgent || currentAgent.state !== state.name) {
+-        clearInterval(progressTimer);
+-        return;
+-      }
+-
+-      currentAgent.progress = Math.min(currentAgent.progress + progressIncrement, maxProgress);
+-      updateStatusBadge(state.name, currentAgent.progress, state.message);
+-    }, progressInterval);
+-
+-    currentAgent.timers.push(progressTimer);
+-
+-    // Handle special state logic
+-    if (state.name === 'coding') {
+-      const numCommits = Math.floor(Math.random() * (state.commits[1] - state.commits[0] + 1)) + state.commits[0];
+-      const commitInterval = scaledDuration / numCommits;
+-
+-      let commitCount = 0;
+-      const commitTimer = setInterval(() => {
+-        if (!currentAgent || currentAgent.state !== state.name) {
+-          clearInterval(commitTimer);
+-          return;
+-        }
+-
+-        if (commitCount < numCommits) {
+-          generateAndDisplayMockCommit();
+-          commitCount++;
+-        } else {
+-          clearInterval(commitTimer);
+-        }
+-      }, commitInterval);
+-
+-      currentAgent.timers.push(commitTimer);
+-    }
+-
+-    // Schedule next state transition
+-    const stateTimer = setTimeout(() => {
+-      if (!currentAgent) return;
+-
+-      if (state.name === 'analyzing') {
+-        transitionToState(AGENT_STATES.CODING);
+-      } else if (state.name === 'coding') {
+-        transitionToState(AGENT_STATES.TESTING);
+-      } else if (state.name === 'testing') {
+-        transitionToState(AGENT_STATES.CREATING_PR);
+-      } else if (state.name === 'creating-pr') {
+-        createPullRequest();
+-      }
+-    }, scaledDuration);
+-
+-    currentAgent.timers.push(stateTimer);
+-  }
+-}
+-
+-function generateAndDisplayMockCommit() {
+-  const feature = currentAgent.issueTitle.substring(0, 30);
+-  const template = COMMIT_TEMPLATES[Math.floor(Math.random() * COMMIT_TEMPLATES.length)];
+-  const explanationTemplate = EXPLANATION_TEMPLATES[Math.floor(Math.random() * EXPLANATION_TEMPLATES.length)];
+-
+-  const message = template.replace('{feature}', feature);
+-  const explanation = explanationTemplate.replace('{feature}', feature);
+-
+-  const mockCommit = {
+-    sha: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+-    short_sha: `mock-${Math.random().toString(36).substr(2, 7)}`,
+-    message,
+-    explanation,
+-    author: {
+-      name: 'Coding Agent',
+-      email: 'agent@devtree.local',
+-      date: new Date().toISOString(),
+-    },
+-    committer: {
+-      name: 'Coding Agent',
+-      email: 'agent@devtree.local',
+-      date: new Date().toISOString(),
+-    },
+-  };
+-
+-  currentAgent.commits.push(mockCommit);
+-  showInfoToast(`Agent committed: ${message.substring(0, 50)}...`);
+-
+-  // Visually update graph (this would trigger a graph refresh in a real implementation)
+-  console.log('Mock commit generated:', mockCommit);
+-}
+-
+-async function createPullRequest() {
+-  updateStatusBadge('creating-pr', 95, 'Creating pull request...');
+-
+-  const prData = {
+-    title: `Fix: ${currentAgent.issueTitle}`,
+-    body: `This PR addresses issue #${currentAgent.issueId}\n\n## Changes\nThis PR was automatically created by the Dev Tree coding agent.\n\n### Commits\n${currentAgent.commits.map((c) => `- ${c.message}`).join('\n')}\n\n## Testing\nAll tests have been run and pass successfully.`,
+-    head: `agent-issue-${currentAgent.issueId}-${Date.now()}`,
+-    base: 'main',
+-  };
+-
+-  try {
+-    // In a real implementation, this would create an actual PR
+-    // For simulation, we just show success
+-    console.log('Would create PR:', prData);
+-
+-    setTimeout(() => {
+-      showInfoToast(`Pull request created for issue #${currentAgent.issueId}`);
+-      transitionToState(AGENT_STATES.COMPLETED);
+-    }, 2000 * currentAgent.speed);
+-  } catch (error) {
+-    console.error('Error creating PR:', error);
+-    handleAgentError(error.message);
+-  }
+-}
+-
+-function handleAgentCompleted() {
+-  updateStatusBadge('completed', 100, 'Completed successfully');
+-
+-  setTimeout(() => {
+-    hideStatusBadge();
+-    cleanupAgent();
+-  }, 5000);
+-}
+-
+-function handleAgentError(message) {
+-  updateStatusBadge('error', 0, `Error: ${message}`);
+-  showErrorToast(`Agent error: ${message}`);
+-
+-  setTimeout(() => {
+-    hideStatusBadge();
+-    cleanupAgent();
+-  }, 5000);
+-}
+-
+-function cleanupAgent() {
+-  if (!currentAgent) return;
+-
+-  // Clear all timers
+-  currentAgent.timers.forEach((timer) => {
+-    if (typeof timer === 'number') {
+-      clearTimeout(timer);
+-      clearInterval(timer);
+-    }
+-  });
+-
+-  currentAgent = null;
+-}
+-
+-function updateStatusBadge(status, progress, message) {
+-  const badge = document.getElementById('agent-status-badge');
+-  if (!badge) return;
+-
+-  badge.style.display = 'flex';
+-  badge.className = `agent-status-badge status-${status}`;
+-
+-  const statusText = badge.querySelector('.status-text');
+-  if (statusText) {
+-    statusText.textContent = message;
+-  }
+-
+-  const progressFill = badge.querySelector('.progress-bar-fill');
+-  if (progressFill) {
+-    progressFill.style.width = `${progress}%`;
+-  }
+-}
+-
+-function hideStatusBadge() {
+-  const badge = document.getElementById('agent-status-badge');
+-  if (badge) {
+-    badge.style.display = 'none';
+-  }
+-}
+-
+-// Export for dev controls
+-export function getAgentState() {
+-  return currentAgent;
+-}
+-
+-export function forceAgentState(state, progress) {
+-  if (!currentAgent) {
+-    showErrorToast('No agent is currently running');
+-    return;
+-  }
+-
+-  // Clear existing timers
+-  currentAgent.timers.forEach((timer) => {
+-    clearTimeout(timer);
+-    clearInterval(timer);
+-  });
+-  currentAgent.timers = [];
+-
+-  // Force to new state
+-  const stateConfig = Object.values(AGENT_STATES).find((s) => s.name === state);
+-  if (stateConfig) {
+-    if (progress !== undefined) {
+-      currentAgent.progress = progress;
+-      updateStatusBadge(state, progress, stateConfig.message);
+-    } else {
+-      transitionToState(stateConfig);
+-    }
+-  }
+-}
+-
+-export function stopAgent() {
+-  if (currentAgent) {
+-    cleanupAgent();
+-    hideStatusBadge();
+-    showInfoToast('Agent stopped');
+-  }
+-}
+diff --git a/web_src/js/features/repo-devtree-dev-controls.js b/web_src/js/features/repo-devtree-dev-controls.js
+deleted file mode 100644
+index 9b63e5c749..0000000000
+--- a/web_src/js/features/repo-devtree-dev-controls.js
++++ /dev/null
+@@ -1,225 +0,0 @@
+-import {getAgentState, forceAgentState, stopAgent} from './repo-devtree-agent.js';
+-import {showInfoToast} from '../modules/toast.js';
+-
+-let globalOwner = null;
+-let globalRepo = null;
+-let controlPanelVisible = false;
+-
+-export function initDevControls(owner, repo) {
+-  globalOwner = owner;
+-  globalRepo = repo;
+-  setupKeyboardShortcut();
+-}
+-
+-function setupKeyboardShortcut() {
+-  document.addEventListener('keydown', (e) => {
+-    // Ctrl+Shift+D or Cmd+Shift+D
+-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'D') {
+-      e.preventDefault();
+-      toggleControlPanel();
+-    }
+-  });
+-}
+-
+-function toggleControlPanel() {
+-  if (controlPanelVisible) {
+-    hideControlPanel();
+-  } else {
+-    showControlPanel();
+-  }
+-}
+-
+-function showControlPanel() {
+-  const existingPanel = document.getElementById('dev-control-panel');
+-  if (existingPanel) {
+-    existingPanel.remove();
+-  }
+-
+-  const panel = document.createElement('div');
+-  panel.id = 'dev-control-panel';
+-  panel.style.cssText = `
+-    position: fixed;
+-    top: 50%;
+-    left: 50%;
+-    transform: translate(-50%, -50%);
+-    background: rgba(0, 0, 0, 0.95);
+-    border: 2px solid #a78bfa;
+-    border-radius: 8px;
+-    padding: 20px;
+-    z-index: 10000;
+-    min-width: 400px;
+-    max-width: 500px;
+-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+-    backdrop-filter: blur(10px);
+-  `;
+-
+-  const agent = getAgentState();
+-
+-  panel.innerHTML = `
+-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+-      <h3 style="margin: 0; color: #a78bfa; font-size: 18px;">
+-        <i class="code icon"></i> Developer Controls
+-      </h3>
+-      <button id="close-dev-panel" style="background: none; border: none; color: rgba(255, 255, 255, 0.6); font-size: 24px; cursor: pointer; padding: 0; width: 24px; height: 24px;">&times;</button>
+-    </div>
+-
+-    <div style="background: rgba(167, 139, 250, 0.1); border: 1px solid rgba(167, 139, 250, 0.3); padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+-      <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px;">KEYBOARD SHORTCUT</div>
+-      <div style="color: #a78bfa; font-weight: 600;">Ctrl+Shift+D <span style="color: rgba(255, 255, 255, 0.5);">(or Cmd+Shift+D on Mac)</span></div>
+-    </div>
+-
+-    ${agent ? `
+-      <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+-        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px;">AGENT STATUS</div>
+-        <div style="color: #4ade80; font-weight: 600; margin-bottom: 4px;">State: ${agent.state || 'unknown'}</div>
+-        <div style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Progress: ${Math.round(agent.progress)}%</div>
+-        <div style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Issue: #${agent.issueId} - ${agent.issueTitle}</div>
+-        <div style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Commits: ${agent.commits.length}</div>
+-      </div>
+-
+-      <div style="margin-bottom: 16px;">
+-        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px; text-transform: uppercase;">Force Agent State</div>
+-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+-          <button class="dev-state-btn" data-state="analyzing" style="padding: 8px 12px; background: rgba(96, 165, 250, 0.2); border: 1px solid rgba(96, 165, 250, 0.5); color: #60a5fa; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Analyzing
+-          </button>
+-          <button class="dev-state-btn" data-state="coding" style="padding: 8px 12px; background: rgba(167, 139, 250, 0.2); border: 1px solid rgba(167, 139, 250, 0.5); color: #a78bfa; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Coding
+-          </button>
+-          <button class="dev-state-btn" data-state="testing" style="padding: 8px 12px; background: rgba(251, 191, 36, 0.2); border: 1px solid rgba(251, 191, 36, 0.5); color: #fbbf24; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Testing
+-          </button>
+-          <button class="dev-state-btn" data-state="creating-pr" style="padding: 8px 12px; background: rgba(52, 211, 153, 0.2); border: 1px solid rgba(52, 211, 153, 0.5); color: #34d399; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Creating PR
+-          </button>
+-          <button class="dev-state-btn" data-state="completed" style="padding: 8px 12px; background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.5); color: #22c55e; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Completed
+-          </button>
+-          <button class="dev-state-btn" data-state="error" style="padding: 8px 12px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; cursor: pointer; border-radius: 4px; font-size: 12px; transition: all 0.2s;">
+-            Error
+-          </button>
+-        </div>
+-      </div>
+-
+-      <div style="margin-bottom: 16px;">
+-        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-bottom: 8px; text-transform: uppercase;">Manual Progress Control</div>
+-        <input type="range" id="dev-progress-slider" min="0" max="100" value="${Math.round(agent.progress)}" style="width: 100%; margin-bottom: 8px;">
+-        <div style="display: flex; justify-content: space-between; font-size: 12px; color: rgba(255, 255, 255, 0.6);">
+-          <span>0%</span>
+-          <span id="dev-progress-value">${Math.round(agent.progress)}%</span>
+-          <span>100%</span>
+-        </div>
+-      </div>
+-
+-      <button id="dev-stop-agent" style="width: 100%; padding: 10px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.5); color: #ef4444; cursor: pointer; border-radius: 4px; font-weight: 600; transition: all 0.2s;">
+-        <i class="stop icon"></i> Stop Agent
+-      </button>
+-    ` : `
+-      <div style="background: rgba(156, 163, 175, 0.1); border: 1px solid rgba(156, 163, 175, 0.3); padding: 20px; border-radius: 4px; text-align: center;">
+-        <div style="color: rgba(255, 255, 255, 0.5); margin-bottom: 8px;">
+-          <i class="info circle icon" style="font-size: 24px;"></i>
+-        </div>
+-        <div style="color: rgba(255, 255, 255, 0.7);">No agent is currently running</div>
+-        <div style="color: rgba(255, 255, 255, 0.5); font-size: 12px; margin-top: 8px;">Deploy an agent from the FAB menu to enable controls</div>
+-      </div>
+-    `}
+-
+-    <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+-      <div style="font-size: 11px; color: rgba(255, 255, 255, 0.4); text-align: center;">
+-        Dev Tree Agent System - Developer Mode
+-      </div>
+-    </div>
+-  `;
+-
+-  document.body.appendChild(panel);
+-  controlPanelVisible = true;
+-
+-  // Event listeners
+-  document.getElementById('close-dev-panel').addEventListener('click', hideControlPanel);
+-
+-  if (agent) {
+-    // State buttons
+-    document.querySelectorAll('.dev-state-btn').forEach((btn) => {
+-      btn.addEventListener('click', (e) => {
+-        const state = e.currentTarget.getAttribute('data-state');
+-        forceAgentState(state);
+-        showInfoToast(`Forced agent to ${state} state`);
+-        // Refresh panel
+-        setTimeout(() => {
+-          if (controlPanelVisible) {
+-            hideControlPanel();
+-            showControlPanel();
+-          }
+-        }, 100);
+-      });
+-
+-      btn.addEventListener('mouseenter', (e) => {
+-        e.currentTarget.style.transform = 'scale(1.05)';
+-        e.currentTarget.style.filter = 'brightness(1.2)';
+-      });
+-
+-      btn.addEventListener('mouseleave', (e) => {
+-        e.currentTarget.style.transform = 'scale(1)';
+-        e.currentTarget.style.filter = 'brightness(1)';
+-      });
+-    });
+-
+-    // Progress slider
+-    const slider = document.getElementById('dev-progress-slider');
+-    const progressValue = document.getElementById('dev-progress-value');
+-
+-    if (slider) {
+-      slider.addEventListener('input', (e) => {
+-        const progress = parseInt(e.target.value);
+-        progressValue.textContent = `${progress}%`;
+-      });
+-
+-      slider.addEventListener('change', (e) => {
+-        const progress = parseInt(e.target.value);
+-        forceAgentState(agent.state, progress);
+-        showInfoToast(`Set progress to ${progress}%`);
+-      });
+-    }
+-
+-    // Stop button
+-    const stopBtn = document.getElementById('dev-stop-agent');
+-    if (stopBtn) {
+-      stopBtn.addEventListener('click', () => {
+-        stopAgent();
+-        hideControlPanel();
+-      });
+-
+-      stopBtn.addEventListener('mouseenter', (e) => {
+-        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.3)';
+-      });
+-
+-      stopBtn.addEventListener('mouseleave', (e) => {
+-        e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)';
+-      });
+-    }
+-  }
+-
+-  // Close on Escape
+-  const escapeHandler = (e) => {
+-    if (e.key === 'Escape') {
+-      hideControlPanel();
+-      document.removeEventListener('keydown', escapeHandler);
+-    }
+-  };
+-  document.addEventListener('keydown', escapeHandler);
+-
+-  // Close on outside click
+-  panel.addEventListener('click', (e) => {
+-    e.stopPropagation();
+-  });
+-
+-  document.addEventListener('click', hideControlPanel, {once: true});
+-}
+-
+-function hideControlPanel() {
+-  const panel = document.getElementById('dev-control-panel');
+-  if (panel) {
+-    panel.remove();
+-  }
+-  controlPanelVisible = false;
+-}
+diff --git a/web_src/js/features/repo-devtree-pr-review.js b/web_src/js/features/repo-devtree-pr-review.js
+deleted file mode 100644
+index 3ec3fe1493..0000000000
+--- a/web_src/js/features/repo-devtree-pr-review.js
++++ /dev/null
+@@ -1,279 +0,0 @@
+-import {GET, POST} from '../modules/fetch.js';
+-import {showErrorToast, showInfoToast} from '../modules/toast.js';
+-
+-let globalOwner = null;
+-let globalRepo = null;
+-
+-export function initPRReview(owner, repo) {
+-  globalOwner = owner;
+-  globalRepo = repo;
+-  setupPanelHandlers();
+-}
+-
+-function setupPanelHandlers() {
+-  const overlay = document.getElementById('pr-review-overlay');
+-  const closeBtn = document.querySelector('#pr-review-panel .close-panel');
+-
+-  if (overlay) {
+-    overlay.addEventListener('click', closePRPanel);
+-  }
+-
+-  if (closeBtn) {
+-    closeBtn.addEventListener('click', closePRPanel);
+-  }
+-}
+-
+-export async function openPRReviewPanel(prNumber) {
+-  const overlay = document.getElementById('pr-review-overlay');
+-  const panel = document.getElementById('pr-review-panel');
+-  const content = panel.querySelector('.panel-content');
+-
+-  // Show panel and overlay
+-  overlay.classList.add('active');
+-  panel.classList.add('active');
+-
+-  // Show loading
+-  content.innerHTML = '<div class="loading">Loading PR details...</div>';
+-
+-  try {
+-    // Fetch PR details
+-    const prResponse = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${prNumber}`);
+-    if (!prResponse.ok) throw new Error(`HTTP ${prResponse.status}`);
+-    const pr = await prResponse.json();
+-
+-    // Fetch commits
+-    const commitsResponse = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${prNumber}/commits`);
+-    const commits = commitsResponse.ok ? await commitsResponse.json() : [];
+-
+-    // Fetch reviews
+-    const reviewsResponse = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${prNumber}/reviews`);
+-    const reviews = reviewsResponse.ok ? await reviewsResponse.json() : [];
+-
+-    // Render PR details
+-    renderPRDetails(content, pr, commits, reviews);
+-  } catch (error) {
+-    console.error('Failed to load PR details:', error);
+-    content.innerHTML = `<div class="ui negative message">
+-      <div class="header">Failed to load PR details</div>
+-      <p>${escapeHTML(error.message)}</p>
+-    </div>`;
+-  }
+-}
+-
+-function closePRPanel() {
+-  const overlay = document.getElementById('pr-review-overlay');
+-  const panel = document.getElementById('pr-review-panel');
+-
+-  overlay.classList.remove('active');
+-  panel.classList.remove('active');
+-}
+-
+-function renderPRDetails(container, pr, commits, reviews) {
+-  const stateClass = pr.merged ? 'merged' : pr.state;
+-  const stateText = pr.merged ? 'Merged' : (pr.state === 'open' ? 'Open' : 'Closed');
+-
+-  let html = `
+-    <div class="pr-review-section">
+-      <div class="pr-title">${escapeHTML(pr.title)}</div>
+-      <div class="pr-number">#${pr.number} <span class="pr-state ${stateClass}">${stateText}</span></div>
+-    </div>
+-
+-    <div class="pr-review-section">
+-      <h4>Details</h4>
+-      <div class="pr-meta-line"><strong>Author:</strong> ${escapeHTML(pr.user?.login || 'Unknown')}</div>
+-      <div class="pr-meta-line"><strong>Created:</strong> ${formatDate(pr.created_at)}</div>
+-      <div class="pr-meta-line"><strong>Updated:</strong> ${formatDate(pr.updated_at)}</div>
+-      ${pr.merged_at ? `<div class="pr-meta-line"><strong>Merged:</strong> ${formatDate(pr.merged_at)}</div>` : ''}
+-      <div class="pr-meta-line"><strong>Base:</strong> <code>${escapeHTML(pr.base?.ref || 'unknown')}</code></div>
+-      <div class="pr-meta-line"><strong>Head:</strong> <code>${escapeHTML(pr.head?.ref || 'unknown')}</code></div>
+-    </div>
+-  `;
+-
+-  if (pr.body) {
+-    html += `
+-      <div class="pr-review-section">
+-        <h4>Description</h4>
+-        <div style="white-space: pre-wrap; color: rgba(255, 255, 255, 0.8); font-size: 13px;">${escapeHTML(pr.body)}</div>
+-      </div>
+-    `;
+-  }
+-
+-  // Commits section
+-  if (commits && commits.length > 0) {
+-    html += `
+-      <div class="pr-review-section">
+-        <h4>Commits (${commits.length})</h4>
+-        <ul class="pr-commit-list">
+-          ${commits.map((commit) => `
+-            <li class="pr-commit-item">
+-              <span class="pr-commit-sha">${commit.sha ? commit.sha.substring(0, 7) : 'unknown'}</span>
+-              ${escapeHTML(commit.commit?.message?.split('\n')[0] || 'No message')}
+-            </li>
+-          `).join('')}
+-        </ul>
+-      </div>
+-    `;
+-  }
+-
+-  // Changed files section
+-  if (pr.changed_files > 0) {
+-    html += `
+-      <div class="pr-review-section">
+-        <h4>Changes</h4>
+-        <div class="pr-meta-line">
+-          <strong>${pr.changed_files}</strong> files changed,
+-          <strong style="color: #4ade80;">+${pr.additions}</strong> additions,
+-          <strong style="color: #fb7185;">-${pr.deletions}</strong> deletions
+-        </div>
+-      </div>
+-    `;
+-  }
+-
+-  // Reviews section
+-  if (reviews && reviews.length > 0) {
+-    html += `
+-      <div class="pr-review-section">
+-        <h4>Reviews (${reviews.length})</h4>
+-        ${reviews.map((review) => `
+-          <div style="padding: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.08); margin-bottom: 8px;">
+-            <div style="font-weight: 600; color: rgba(255, 255, 255, 0.9); margin-bottom: 4px;">
+-              ${escapeHTML(review.user?.login || 'Unknown')}
+-              <span style="margin-left: 8px; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600;
+-                ${review.state === 'APPROVED' ? 'background: rgba(34, 197, 94, 0.2); color: #4ade80;' : ''}
+-                ${review.state === 'CHANGES_REQUESTED' ? 'background: rgba(239, 68, 68, 0.2); color: #fb7185;' : ''}
+-                ${review.state === 'COMMENTED' ? 'background: rgba(156, 163, 175, 0.2); color: #9ca3af;' : ''}
+-              ">${review.state}</span>
+-            </div>
+-            ${review.body ? `<div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">${escapeHTML(review.body)}</div>` : ''}
+-          </div>
+-        `).join('')}
+-      </div>
+-    `;
+-  }
+-
+-  // Actions section (only show if PR is open)
+-  if (pr.state === 'open') {
+-    html += `
+-      <div class="pr-review-section">
+-        <h4>Review Actions</h4>
+-        <div class="pr-review-comment-form">
+-          <textarea id="pr-review-comment" placeholder="Add your review comment (optional)..."></textarea>
+-        </div>
+-        <div class="pr-review-actions">
+-          <button class="ui green button" data-action="approve" data-pr="${pr.number}">
+-            <i class="check icon"></i> Approve
+-          </button>
+-          <button class="ui yellow button" data-action="comment" data-pr="${pr.number}">
+-            <i class="comment icon"></i> Comment
+-          </button>
+-          <button class="ui red button" data-action="request-changes" data-pr="${pr.number}">
+-            <i class="times icon"></i> Request Changes
+-          </button>
+-        </div>
+-        ${pr.mergeable ? `
+-          <div class="pr-review-actions" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+-            <button class="ui purple button" data-action="merge" data-pr="${pr.number}" style="flex: none; width: 100%;">
+-              <i class="code branch icon"></i> Merge Pull Request
+-            </button>
+-          </div>
+-        ` : ''}
+-      </div>
+-    `;
+-  }
+-
+-  container.innerHTML = html;
+-
+-  // Attach event listeners to action buttons
+-  container.querySelectorAll('[data-action]').forEach((btn) => {
+-    btn.addEventListener('click', handlePRAction);
+-  });
+-}
+-
+-async function handlePRAction(e) {
+-  const action = e.currentTarget.getAttribute('data-action');
+-  const prNumber = e.currentTarget.getAttribute('data-pr');
+-  const commentTextarea = document.getElementById('pr-review-comment');
+-  const comment = commentTextarea ? commentTextarea.value.trim() : '';
+-
+-  e.currentTarget.classList.add('loading');
+-
+-  try {
+-    if (action === 'approve' || action === 'comment' || action === 'request-changes') {
+-      await submitReview(prNumber, action, comment);
+-    } else if (action === 'merge') {
+-      await mergePR(prNumber);
+-    }
+-
+-    // Reload PR details
+-    setTimeout(() => {
+-      openPRReviewPanel(prNumber);
+-    }, 500);
+-  } catch (error) {
+-    console.error(`Error performing ${action}:`, error);
+-    showErrorToast(error.message);
+-    e.currentTarget.classList.remove('loading');
+-  }
+-}
+-
+-async function submitReview(prNumber, action, comment) {
+-  const eventMap = {
+-    'approve': 'APPROVE',
+-    'comment': 'COMMENT',
+-    'request-changes': 'REQUEST_CHANGES',
+-  };
+-
+-  const reviewData = {
+-    event: eventMap[action],
+-  };
+-
+-  if (comment) {
+-    reviewData.body = comment;
+-  }
+-
+-  const response = await POST(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${prNumber}/reviews`, {
+-    data: reviewData,
+-  });
+-
+-  if (!response.ok) {
+-    const error = await response.json();
+-    throw new Error(error.message || `Failed to ${action} PR`);
+-  }
+-
+-  const actionText = action === 'approve' ? 'approved' : (action === 'request-changes' ? 'requested changes' : 'commented on');
+-  showInfoToast(`Successfully ${actionText} PR #${prNumber}`);
+-}
+-
+-async function mergePR(prNumber) {
+-  const mergeData = {
+-    Do: 'merge', // or 'rebase', 'squash'
+-  };
+-
+-  const response = await POST(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${prNumber}/merge`, {
+-    data: mergeData,
+-  });
+-
+-  if (!response.ok) {
+-    const error = await response.json();
+-    throw new Error(error.message || 'Failed to merge PR');
+-  }
+-
+-  showInfoToast(`Successfully merged PR #${prNumber}`);
+-
+-  // Close panel after merge
+-  setTimeout(() => {
+-    closePRPanel();
+-  }, 2000);
+-}
+-
+-function formatDate(dateString) {
+-  if (!dateString) return '';
+-  const date = new Date(dateString);
+-  return date.toLocaleString();
+-}
+-
+-function escapeHTML(str) {
+-  if (!str) return '';
+-  const div = document.createElement('div');
+-  div.textContent = str;
+-  return div.innerHTML;
+-}
+diff --git a/web_src/js/features/repo-devtree.js b/web_src/js/features/repo-devtree.js
+deleted file mode 100644
+index 443ab3aaa4..0000000000
+--- a/web_src/js/features/repo-devtree.js
++++ /dev/null
+@@ -1,795 +0,0 @@
+-import {GET} from '../modules/fetch.js';
+-import {showErrorToast} from '../modules/toast.js';
+-import $ from 'jquery';
+-import {initDevTreeAgent, setSelectedCommit} from './repo-devtree-agent.js';
+-import {initPRReview, openPRReviewPanel} from './repo-devtree-pr-review.js';
+-import {initDevControls} from './repo-devtree-dev-controls.js';
+-
+-// Branch color palette (from gitgraph.css) - 16 colors
+-const BRANCH_COLORS = [
+-  '#7db233', '#499a37', '#ce4751', '#8f9121', '#ac32a6', '#7445e9',
+-  '#c67d28', '#4db392', '#aa4d30', '#2a6f84', '#c45327', '#3d965c',
+-  '#792a93', '#439d73', '#103aad', '#982e85',
+-];
+-
+-const BRANCH_COLORS_HIGHLIGHT = [
+-  '#87ca28', '#5ac144', '#ed5a8b', '#ced049', '#db61d7', '#8455f9',
+-  '#e6a151', '#44daaa', '#dd7a5c', '#38859c', '#d95520', '#42ae68',
+-  '#9126b5', '#4ab080', '#284fb8', '#971c80',
+-];
+-
+-// Layout dimensions (Railway-style card nodes)
+-const COLUMN_SPACING = 200;  // Wide spacing for card nodes
+-const ROW_SPACING = 80;      // Vertical spacing for cards
+-const CARD_WIDTH = 180;      // Card width
+-const CARD_HEIGHT = 60;      // Card height
+-const CARD_RADIUS = 8;       // Card corner radius
+-const COMMIT_RADIUS = 8;     // Fallback circle size
+-const STROKE_WIDTH = 2.5;    // Path stroke width
+-
+-// Pan/zoom constants
+-const DEFAULT_SCALE = 1.0;
+-const MIN_SCALE = 0.3;
+-const MAX_SCALE = 3.0;
+-const ZOOM_SPEED = 0.15;
+-const PAN_THRESHOLD = 5; // pixels before treating as pan vs click
+-
+-// State management class
+-class DevTreeState {
+-  constructor() {
+-    this.scale = DEFAULT_SCALE;
+-    this.translateX = 0;
+-    this.translateY = 0;
+-    this.isPanning = false;
+-    this.panStartX = 0;
+-    this.panStartY = 0;
+-    this.startTranslateX = 0;
+-    this.startTranslateY = 0;
+-    this.panDistance = 0;
+-  }
+-}
+-
+-let globalState = null;
+-let globalOwner = null;
+-let globalRepo = null;
+-let panZoomGroup = null;
+-let currentViewBox = null; // Store viewBox for reset
+-
+-export function initRepoDevTree() {
+-  const container = document.getElementById('devtree-container');
+-  if (!container) return;
+-
+-  globalOwner = container.getAttribute('data-owner');
+-  globalRepo = container.getAttribute('data-repo');
+-  globalState = new DevTreeState();
+-
+-  // Setup zoom controls
+-  setupZoomControls();
+-
+-  // Load and render graph (no filters needed)
+-  loadCommitGraph(globalOwner, globalRepo, container);
+-
+-  // Setup side panel close handlers
+-  setupPanelHandlers();
+-
+-  // Initialize agent features
+-  initDevTreeAgent(globalOwner, globalRepo);
+-  initPRReview(globalOwner, globalRepo);
+-  initDevControls(globalOwner, globalRepo);
+-}
+-
+-async function fetchGraphData(owner, repo, page = 1) {
+-  const url = `/api/v1/repos/${owner}/${repo}/graph?page=${page}&limit=100`;
+-  const response = await GET(url);
+-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+-  return await response.json();
+-}
+-
+-function getBranchColor(branchIndex, highlight = false) {
+-  const colors = highlight ? BRANCH_COLORS_HIGHLIGHT : BRANCH_COLORS;
+-  return colors[branchIndex % colors.length];
+-}
+-
+-function addGridPattern(svg) {
+-  // Create pattern for Railway-style grid dots
+-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+-  const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+-
+-  pattern.setAttribute('id', 'grid-pattern');
+-  pattern.setAttribute('width', '24');
+-  pattern.setAttribute('height', '24');
+-  pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+-
+-  // Add a small circle for the grid dot
+-  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+-  circle.setAttribute('cx', '1');
+-  circle.setAttribute('cy', '1');
+-  circle.setAttribute('r', '0.8');
+-  circle.setAttribute('fill', 'rgba(255, 255, 255, 0.15)');
+-  circle.setAttribute('opacity', '0.5');
+-
+-  pattern.appendChild(circle);
+-  defs.appendChild(pattern);
+-  svg.appendChild(defs);
+-}
+-
+-function truncateText(text, maxLength) {
+-  if (!text) return '';
+-  if (text.length <= maxLength) return text;
+-  return text.substring(0, maxLength) + '...';
+-}
+-
+-function createCommitCard(commit, x, y, colorNum) {
+-  // Create group for card
+-  const cardGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+-  cardGroup.setAttribute('class', 'commit-card');
+-  cardGroup.setAttribute('data-sha', commit.sha);
+-  cardGroup.setAttribute('data-color', colorNum);
+-
+-  // Detect commit type
+-  const isMerge = commit.parents && commit.parents.length > 1;
+-  const isTagged = commit.refs && commit.refs.length > 0;
+-
+-  if (isMerge) cardGroup.classList.add('merge-commit');
+-  if (isTagged) cardGroup.classList.add('tagged-commit');
+-
+-  // Get color for this commit
+-  const color = BRANCH_COLORS[colorNum % BRANCH_COLORS.length];
+-
+-  // Create card rectangle
+-  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+-  rect.setAttribute('x', x - CARD_WIDTH / 2);
+-  rect.setAttribute('y', y - CARD_HEIGHT / 2);
+-  rect.setAttribute('width', CARD_WIDTH);
+-  rect.setAttribute('height', CARD_HEIGHT);
+-  rect.setAttribute('rx', CARD_RADIUS);
+-  rect.setAttribute('ry', CARD_RADIUS);
+-  rect.setAttribute('fill', 'rgba(0, 0, 0, 0.6)');
+-  rect.setAttribute('stroke', color);
+-  rect.setAttribute('stroke-width', '1.5');
+-  cardGroup.appendChild(rect);
+-
+-  // Add commit hash (short)
+-  const shortSha = commit.short_sha || commit.sha.substring(0, 7);
+-  const hashText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+-  hashText.setAttribute('x', x);
+-  hashText.setAttribute('y', y - CARD_HEIGHT / 2 + 18);
+-  hashText.setAttribute('text-anchor', 'middle');
+-  hashText.setAttribute('class', 'commit-card-text');
+-  hashText.setAttribute('fill', color);
+-  hashText.setAttribute('font-weight', '600');
+-  hashText.textContent = shortSha;
+-  cardGroup.appendChild(hashText);
+-
+-  // Add commit message (truncated)
+-  const message = truncateText(commit.message || '', 22);
+-  const messageText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+-  messageText.setAttribute('x', x);
+-  messageText.setAttribute('y', y - CARD_HEIGHT / 2 + 35);
+-  messageText.setAttribute('text-anchor', 'middle');
+-  messageText.setAttribute('class', 'commit-card-message');
+-  messageText.textContent = message;
+-  cardGroup.appendChild(messageText);
+-
+-  // Add author name (truncated)
+-  const authorName = truncateText(
+-    commit.author?.name || commit.committer?.name || 'Unknown',
+-    20
+-  );
+-  const authorText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+-  authorText.setAttribute('x', x);
+-  authorText.setAttribute('y', y - CARD_HEIGHT / 2 + 50);
+-  authorText.setAttribute('text-anchor', 'middle');
+-  authorText.setAttribute('class', 'commit-card-message');
+-  authorText.setAttribute('font-size', '9');
+-  authorText.setAttribute('fill', 'rgba(255, 255, 255, 0.5)');
+-  authorText.textContent = authorName;
+-  cardGroup.appendChild(authorText);
+-
+-  return cardGroup;
+-}
+-
+-async function loadCommitGraph(owner, repo, container) {
+-  const loading = document.getElementById('loading');
+-  const errorDiv = document.getElementById('error');
+-  const graphContainer = document.getElementById('devtree-graph-container');
+-
+-  try {
+-    const graphData = await fetchGraphData(owner, repo, 1);
+-    renderGraph(graphContainer, graphData, owner, repo);
+-    loading.style.display = 'none';
+-  } catch (error) {
+-    console.error('Failed to load commit graph:', error);
+-    loading.style.display = 'none';
+-    errorDiv.style.display = 'block';
+-    document.getElementById('error-text').textContent = error.message;
+-    showErrorToast(`Failed to load commit graph: ${error.message}`);
+-  }
+-}
+-
+-function renderGraph(container, graphData, owner, repo) {
+-  const commits = graphData.commits;
+-  if (!commits || commits.length === 0) {
+-    container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);">No commits to display</div>';
+-    return;
+-  }
+-
+-  // Calculate dimensions
+-  const minRow = Math.min(...commits.map((c) => c.row));
+-  const maxRow = Math.max(...commits.map((c) => c.row));
+-  const minColumn = Math.min(...commits.map((c) => c.column));
+-  const maxColumn = Math.max(...commits.map((c) => c.column));
+-
+-  // Build commit map for parent lookups
+-  const commitMap = new Map();
+-  commits.forEach((commit) => {
+-    commitMap.set(commit.sha, commit);
+-  });
+-
+-  // Clear container
+-  container.innerHTML = '';
+-
+-  // Create SVG with larger dimensions
+-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+-
+-  // Calculate viewBox with padding
+-  const padding = COLUMN_SPACING * 2;
+-  const viewBoxX = minColumn * COLUMN_SPACING - padding;
+-  const viewBoxY = minRow * ROW_SPACING - padding;
+-  const viewBoxWidth = (maxColumn - minColumn + 1) * COLUMN_SPACING + padding * 2;
+-  const viewBoxHeight = (maxRow - minRow + 1) * ROW_SPACING + padding * 2;
+-
+-  svg.setAttribute('viewBox', `${viewBoxX} ${viewBoxY} ${viewBoxWidth} ${viewBoxHeight}`);
+-  svg.setAttribute('width', '100%');
+-  svg.setAttribute('height', '100%');
+-
+-  // Store viewBox for reset
+-  currentViewBox = {x: viewBoxX, y: viewBoxY, width: viewBoxWidth, height: viewBoxHeight};
+-
+-  // Add grid pattern
+-  addGridPattern(svg);
+-
+-  // Add background rectangle with grid
+-  const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+-  background.setAttribute('x', viewBoxX);
+-  background.setAttribute('y', viewBoxY);
+-  background.setAttribute('width', viewBoxWidth);
+-  background.setAttribute('height', viewBoxHeight);
+-  background.setAttribute('fill', 'url(#grid-pattern)');
+-  svg.appendChild(background);
+-
+-  // Create pan-zoom group
+-  panZoomGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+-  panZoomGroup.setAttribute('id', 'pan-zoom-group');
+-  svg.appendChild(panZoomGroup);
+-
+-  // Draw flows - separate paths and circles for proper layering
+-  const pathsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+-  pathsGroup.setAttribute('class', 'paths-layer');
+-  const circlesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+-  circlesGroup.setAttribute('class', 'circles-layer');
+-
+-  // Default gray color for cross-branch edges
+-  const CROSS_BRANCH_COLOR = 'rgba(255, 255, 255, 0.3)';
+-
+-  // Track drawn edges to avoid duplicates
+-  const drawnEdges = new Set();
+-
+-  // Draw all edges
+-  commits.forEach((commit) => {
+-    const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
+-    const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
+-    const commitColor = commit.color_number;
+-
+-    // Draw connections to parents
+-    const parents = commit.parents || [];
+-    parents.forEach((parentSha) => {
+-      const parent = commitMap.get(parentSha);
+-      if (!parent) return;
+-
+-      // Create unique edge key to prevent duplicates
+-      const edgeKey = `${commit.sha}-${parentSha}`;
+-      if (drawnEdges.has(edgeKey)) return;
+-      drawnEdges.add(edgeKey);
+-
+-      const parentX = parent.column * COLUMN_SPACING + COLUMN_SPACING;
+-      const parentY = parent.row * ROW_SPACING + (ROW_SPACING / 2);
+-      const parentColor = parent.color_number;
+-
+-      // Determine edge color: same branch color or gray
+-      const edgeColor = (commitColor === parentColor)
+-        ? getBranchColor(commitColor)
+-        : CROSS_BRANCH_COLOR;
+-
+-      // Generate path based on relationship
+-      let pathData;
+-      if (x === parentX) {
+-        // Vertical line (|) - same column
+-        pathData = `M ${x} ${y} V ${parentY}`;
+-      } else {
+-        // Different columns - use structured routing
+-        // Go down from child, across horizontally, then down to parent
+-        const midY = y + (parentY - y) / 2;
+-        pathData = `M ${x} ${y} V ${midY} H ${parentX} V ${parentY}`;
+-      }
+-
+-      // Create individual path for this edge
+-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+-      path.setAttribute('d', pathData);
+-      path.setAttribute('stroke', edgeColor);
+-      path.setAttribute('stroke-width', STROKE_WIDTH);
+-      path.setAttribute('fill', 'none');
+-      path.setAttribute('stroke-linecap', 'round');
+-      path.setAttribute('stroke-linejoin', 'round');
+-      path.setAttribute('opacity', '0.7');
+-      pathsGroup.appendChild(path);
+-    });
+-  });
+-
+-  // Draw commit cards
+-  commits.forEach((commit) => {
+-    const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
+-    const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
+-    const colorNum = commit.color_number;
+-
+-    // Create commit card node (Railway-style)
+-    const card = createCommitCard(commit, x, y, colorNum);
+-
+-    // Add click handler for commit details
+-    card.addEventListener('mousedown', () => {
+-      globalState.panDistance = 0;
+-    });
+-    card.addEventListener('click', (e) => {
+-      e.stopPropagation();
+-      if (globalState.panDistance < PAN_THRESHOLD) {
+-        openCommitPanel(commit.sha);
+-        setSelectedCommit(commit.sha);
+-      }
+-    });
+-
+-    circlesGroup.appendChild(card);
+-  });
+-
+-  // Add layers in order: paths first, then circles on top
+-  panZoomGroup.appendChild(pathsGroup);
+-  panZoomGroup.appendChild(circlesGroup);
+-
+-  container.appendChild(svg);
+-
+-  // Setup pan/zoom on the container
+-  setupPanZoom(container, svg, viewBoxWidth, viewBoxHeight);
+-
+-  // Center graph initially - wait for DOM to update
+-  setTimeout(() => {
+-    centerGraph(viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight);
+-  }, 0);
+-}
+-
+-function setupPanZoom(container, svg, viewBoxWidth, viewBoxHeight) {
+-  let clickedElement = null;
+-
+-  // Mouse down - start pan
+-  container.addEventListener('mousedown', (e) => {
+-    if (e.button !== 0) return; // Only left click
+-
+-    globalState.isPanning = true;
+-    globalState.panStartX = e.clientX;
+-    globalState.panStartY = e.clientY;
+-    globalState.startTranslateX = globalState.translateX;
+-    globalState.startTranslateY = globalState.translateY;
+-    globalState.panDistance = 0;
+-    clickedElement = e.target;
+-
+-    container.classList.add('panning');
+-    e.preventDefault();
+-  });
+-
+-  // Mouse move - pan (1:1 mapping with mouse movement)
+-  container.addEventListener('mousemove', (e) => {
+-    if (!globalState.isPanning) return;
+-
+-    const dx = e.clientX - globalState.panStartX;
+-    const dy = e.clientY - globalState.panStartY;
+-
+-    globalState.panDistance = Math.sqrt(dx * dx + dy * dy);
+-
+-    // Direct 1:1 mapping - no scale adjustment for more natural feel
+-    globalState.translateX = globalState.startTranslateX + dx;
+-    globalState.translateY = globalState.startTranslateY + dy;
+-
+-    applyTransform();
+-  });
+-
+-  // Mouse up - end pan
+-  const endPan = () => {
+-    if (globalState.isPanning) {
+-      globalState.isPanning = false;
+-      container.classList.remove('panning');
+-    }
+-  };
+-
+-  container.addEventListener('mouseup', endPan);
+-  container.addEventListener('mouseleave', endPan);
+-
+-  // Wheel - zoom (zoom toward cursor position)
+-  container.addEventListener('wheel', (e) => {
+-    e.preventDefault();
+-
+-    const rect = container.getBoundingClientRect();
+-    const mouseX = e.clientX - rect.left;
+-    const mouseY = e.clientY - rect.top;
+-
+-    // Calculate mouse position in SVG coordinates before zoom
+-    // Screen position = (SVG position * scale) + translate
+-    // So: SVG position = (Screen position - translate) / scale
+-    const svgX = (mouseX - globalState.translateX) / globalState.scale;
+-    const svgY = (mouseY - globalState.translateY) / globalState.scale;
+-
+-    // Update scale
+-    const delta = -e.deltaY;
+-    const zoomFactor = delta > 0 ? (1 + ZOOM_SPEED) : (1 - ZOOM_SPEED);
+-    const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, globalState.scale * zoomFactor));
+-
+-    if (newScale !== globalState.scale) {
+-      // Calculate new translation to keep mouse position fixed
+-      // We want: mouseX = (svgX * newScale) + newTranslateX
+-      // So: newTranslateX = mouseX - (svgX * newScale)
+-      globalState.scale = newScale;
+-      globalState.translateX = mouseX - (svgX * newScale);
+-      globalState.translateY = mouseY - (svgY * newScale);
+-
+-      applyTransform();
+-    }
+-  });
+-}
+-
+-function setupZoomControls() {
+-  const zoomIn = document.getElementById('zoom-in');
+-  const zoomOut = document.getElementById('zoom-out');
+-  const zoomReset = document.getElementById('zoom-reset');
+-  const container = document.getElementById('devtree-graph-container');
+-
+-  if (zoomIn && container) {
+-    zoomIn.addEventListener('click', () => {
+-      zoomTowardCenter(container, 1 + ZOOM_SPEED);
+-    });
+-  }
+-
+-  if (zoomOut && container) {
+-    zoomOut.addEventListener('click', () => {
+-      zoomTowardCenter(container, 1 - ZOOM_SPEED);
+-    });
+-  }
+-
+-  if (zoomReset) {
+-    zoomReset.addEventListener('click', () => {
+-      // Re-center and fit graph using stored viewBox
+-      if (currentViewBox) {
+-        centerGraph(currentViewBox.x, currentViewBox.y, currentViewBox.width, currentViewBox.height);
+-      } else {
+-        globalState.scale = DEFAULT_SCALE;
+-        globalState.translateX = 0;
+-        globalState.translateY = 0;
+-        applyTransform();
+-      }
+-    });
+-  }
+-}
+-
+-function zoomTowardCenter(container, zoomFactor) {
+-  const rect = container.getBoundingClientRect();
+-  const centerX = rect.width / 2;
+-  const centerY = rect.height / 2;
+-
+-  // Calculate center position in SVG coordinates before zoom
+-  const svgX = (centerX - globalState.translateX) / globalState.scale;
+-  const svgY = (centerY - globalState.translateY) / globalState.scale;
+-
+-  // Update scale
+-  const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, globalState.scale * zoomFactor));
+-
+-  if (newScale !== globalState.scale) {
+-    // Calculate new translation to keep center position fixed
+-    globalState.scale = newScale;
+-    globalState.translateX = centerX - (svgX * newScale);
+-    globalState.translateY = centerY - (svgY * newScale);
+-
+-    applyTransform();
+-  }
+-}
+-
+-function centerGraph(viewBoxX, viewBoxY, viewBoxWidth, viewBoxHeight) {
+-  const container = document.getElementById('devtree-graph-container');
+-  if (!container) return;
+-
+-  const rect = container.getBoundingClientRect();
+-  const containerWidth = rect.width;
+-  const containerHeight = rect.height;
+-
+-  // Calculate scale to fit the entire graph in view with padding
+-  const scaleX = (containerWidth * 0.85) / viewBoxWidth;
+-  const scaleY = (containerHeight * 0.85) / viewBoxHeight;
+-  const fitScale = Math.min(scaleX, scaleY, MAX_SCALE);
+-
+-  // Use the fit scale
+-  globalState.scale = fitScale;
+-
+-  // Calculate the center of the viewBox in SVG coordinates (absolute coordinates)
+-  const graphCenterXInSVG = viewBoxX + (viewBoxWidth / 2);
+-  const graphCenterYInSVG = viewBoxY + (viewBoxHeight / 2);
+-
+-  // We want the graph center to appear at the container center
+-  // Screen Position = (SVG Coordinate * Scale) + Translate
+-  // Container Center = (Graph Center SVG * Scale) + Translate
+-  // So: Translate = Container Center - (Graph Center SVG * Scale)
+-  const containerCenterX = containerWidth / 2;
+-  const containerCenterY = containerHeight / 2;
+-
+-  globalState.translateX = containerCenterX - (graphCenterXInSVG * globalState.scale);
+-  globalState.translateY = containerCenterY - (graphCenterYInSVG * globalState.scale);
+-
+-  applyTransform();
+-
+-  // Debug log
+-  console.log('Center Graph:', {
+-    viewBox: {x: viewBoxX, y: viewBoxY, w: viewBoxWidth, h: viewBoxHeight},
+-    graphCenter: {x: graphCenterXInSVG, y: graphCenterYInSVG},
+-    containerCenter: {x: containerCenterX, y: containerCenterY},
+-    scale: globalState.scale,
+-    translate: {x: globalState.translateX, y: globalState.translateY}
+-  });
+-}
+-
+-function applyTransform() {
+-  if (panZoomGroup) {
+-    panZoomGroup.setAttribute('transform',
+-      `translate(${globalState.translateX}, ${globalState.translateY}) scale(${globalState.scale})`
+-    );
+-  }
+-}
+-
+-// Filters removed - graph shows all branches by default
+-
+-async function openCommitPanel(sha) {
+-  const overlay = document.getElementById('commit-detail-overlay');
+-  const panel = document.getElementById('commit-detail-panel');
+-  const content = panel.querySelector('.panel-content');
+-
+-  // Show panel and overlay
+-  overlay.classList.add('active');
+-  panel.classList.add('active');
+-
+-  // Show loading
+-  content.innerHTML = '<div class="loading">Loading commit details...</div>';
+-
+-  try {
+-    // Fetch full commit details
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/git/commits/${sha}?stat=true&files=true`);
+-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+-    const commit = await response.json();
+-
+-    // Render commit details
+-    renderCommitDetails(content, commit);
+-  } catch (error) {
+-    console.error('Failed to load commit details:', error);
+-    content.innerHTML = `<div class="ui negative message">
+-      <div class="header">Failed to load commit details</div>
+-      <p>${escapeHTML(error.message)}</p>
+-    </div>`;
+-  }
+-}
+-
+-function closeCommitPanel() {
+-  const overlay = document.getElementById('commit-detail-overlay');
+-  const panel = document.getElementById('commit-detail-panel');
+-
+-  overlay.classList.remove('active');
+-  panel.classList.remove('active');
+-}
+-
+-function setupPanelHandlers() {
+-  const overlay = document.getElementById('commit-detail-overlay');
+-  const closeBtn = document.querySelector('.close-panel');
+-
+-  if (overlay) {
+-    overlay.addEventListener('click', closeCommitPanel);
+-  }
+-
+-  if (closeBtn) {
+-    closeBtn.addEventListener('click', closeCommitPanel);
+-  }
+-}
+-
+-function renderCommitDetails(container, commit) {
+-  const sha = commit.sha;
+-  const message = commit.commit?.message || '';
+-  const author = commit.commit?.author || {};
+-  const committer = commit.commit?.committer || {};
+-  const stats = commit.stats || {};
+-  const files = commit.files || [];
+-
+-  // Split message into title and body
+-  const messageParts = message.split('\n');
+-  const messageTitle = messageParts[0];
+-  const messageBody = messageParts.slice(1).join('\n').trim();
+-
+-  // Build commit URL
+-  const commitUrl = `/${globalOwner}/${globalRepo}/commit/${sha}`;
+-
+-  const html = `
+-    <div class="commit-section commit-metadata">
+-      <div class="commit-author-info">
+-        <img src="${escapeHTML(commit.author?.avatar_url || '')}" alt="${escapeHTML(author.name || 'Unknown')}">
+-        <div class="commit-author-details">
+-          <span class="name">${escapeHTML(author.name || 'Unknown')}</span>
+-          <span class="date">${formatDate(author.date)}</span>
+-        </div>
+-      </div>
+-      <div class="commit-sha-line">
+-        <span class="sha-label">SHA:</span>
+-        <a href="${commitUrl}" class="commit-sha-link" target="_blank">
+-          <code class="commit-sha-code">${escapeHTML(sha)}</code>
+-        </a>
+-      </div>
+-      ${stats.total !== undefined ? `
+-        <div class="commit-stats-inline">
+-          <span class="stat-item">${stats.total || 0} files</span>
+-          <span class="stat-item additions">+${stats.additions || 0}</span>
+-          <span class="stat-item deletions">-${stats.deletions || 0}</span>
+-        </div>
+-      ` : ''}
+-    </div>
+-
+-    <div class="commit-section commit-message-section">
+-      <a href="${commitUrl}" class="commit-message-title-link" target="_blank">
+-        <div class="commit-message-title">${escapeHTML(messageTitle)}</div>
+-      </a>
+-      ${messageBody ? `<div class="commit-message-body">${escapeHTML(messageBody)}</div>` : ''}
+-    </div>
+-
+-    ${files.length > 0 ? `
+-      <div class="commit-section commit-files-section">
+-        <h4>Changed Files (${files.length})</h4>
+-        <div class="commit-files-list">
+-          ${files.map((file, index) => {
+-    const status = file.status || 'modified';
+-    const statusLabel = status === 'added' ? 'A' : status === 'deleted' ? 'D' : 'M';
+-    const additions = file.additions || 0;
+-    const deletions = file.deletions || 0;
+-    return `
+-              <div class="file-item" data-file-index="${index}">
+-                <div class="file-header">
+-                  <span class="file-status ${status}">${statusLabel}</span>
+-                  <span class="file-path" title="${escapeHTML(file.filename)}">${escapeHTML(file.filename)}</span>
+-                  <span class="file-changes">
+-                    <span class="additions">+${additions}</span>
+-                    <span class="deletions">-${deletions}</span>
+-                  </span>
+-                  <button class="view-diff-btn" data-file="${escapeHTML(file.filename)}" data-sha="${escapeHTML(sha)}" title="View diff">
+-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+-                      <path d="M8.06 2C3 2 0 8 0 8s3 6 8.06 6C13 14 16 8 16 8s-3-6-7.94-6zM8 12c-2.2 0-4-1.78-4-4 0-2.2 1.8-4 4-4 2.22 0 4 1.8 4 4 0 2.22-1.78 4-4 4zm2-4c0 1.11-.89 2-2 2-1.11 0-2-.89-2-2 0-1.11.89-2 2-2 1.11 0 2 .89 2 2z"/>
+-                    </svg>
+-                  </button>
+-                </div>
+-                <div class="file-diff" data-file-index="${index}" style="display: none;">
+-                  <div class="diff-loading">Loading diff...</div>
+-                </div>
+-              </div>
+-            `;
+-  }).join('')}
+-        </div>
+-      </div>
+-    ` : ''}
+-  `;
+-
+-  container.innerHTML = html;
+-
+-  // Add event listeners for view diff buttons
+-  const diffButtons = container.querySelectorAll('.view-diff-btn');
+-  diffButtons.forEach((btn) => {
+-    btn.addEventListener('click', async (e) => {
+-      e.stopPropagation();
+-      const filename = btn.getAttribute('data-file');
+-      const sha = btn.getAttribute('data-sha');
+-      const fileItem = btn.closest('.file-item');
+-      const fileIndex = fileItem.getAttribute('data-file-index');
+-      const diffContainer = fileItem.querySelector('.file-diff');
+-
+-      // Toggle diff visibility
+-      if (diffContainer.style.display === 'none') {
+-        diffContainer.style.display = 'block';
+-        btn.classList.add('active');
+-
+-        // Load diff if not already loaded
+-        if (!diffContainer.hasAttribute('data-loaded')) {
+-          await loadFileDiff(sha, filename, diffContainer);
+-          diffContainer.setAttribute('data-loaded', 'true');
+-        }
+-      } else {
+-        diffContainer.style.display = 'none';
+-        btn.classList.remove('active');
+-      }
+-    });
+-  });
+-}
+-
+-async function loadFileDiff(sha, filename, container) {
+-  try {
+-    // Fetch the commit diff
+-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/git/commits/${sha}.diff`);
+-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+-
+-    const diffText = await response.text();
+-
+-    // Parse and find the specific file's diff
+-    const fileDiff = extractFileDiff(diffText, filename);
+-
+-    if (fileDiff) {
+-      renderDiff(fileDiff, container);
+-    } else {
+-      container.innerHTML = '<div class="diff-error">No diff available for this file</div>';
+-    }
+-  } catch (error) {
+-    console.error('Failed to load diff:', error);
+-    container.innerHTML = `<div class="diff-error">Failed to load diff: ${escapeHTML(error.message)}</div>`;
+-  }
+-}
+-
+-function extractFileDiff(fullDiff, filename) {
+-  // Split by file headers (diff --git)
+-  const fileSections = fullDiff.split(/^diff --git /m);
+-
+-  for (const section of fileSections) {
+-    if (section.includes(filename)) {
+-      return 'diff --git ' + section;
+-    }
+-  }
+-
+-  return null;
+-}
+-
+-function renderDiff(diffText, container) {
+-  const lines = diffText.split('\n');
+-  let html = '<div class="diff-view">';
+-
+-  for (const line of lines) {
+-    let lineClass = 'diff-line';
+-    let lineContent = escapeHTML(line);
+-
+-    if (line.startsWith('diff --git') || line.startsWith('index ') || line.startsWith('---') || line.startsWith('+++')) {
+-      lineClass += ' diff-header';
+-    } else if (line.startsWith('@@')) {
+-      lineClass += ' diff-hunk';
+-    } else if (line.startsWith('+') && !line.startsWith('+++')) {
+-      lineClass += ' diff-addition';
+-      // Remove the + prefix since we add it with CSS
+-      lineContent = escapeHTML(line.substring(1));
+-    } else if (line.startsWith('-') && !line.startsWith('---')) {
+-      lineClass += ' diff-deletion';
+-      // Remove the - prefix since we add it with CSS
+-      lineContent = escapeHTML(line.substring(1));
+-    } else if (line.startsWith(' ')) {
+-      lineClass += ' diff-context';
+-      // Remove the leading space
+-      lineContent = escapeHTML(line.substring(1));
+-    }
+-
+-    html += `<div class="${lineClass}"><code>${lineContent}</code></div>`;
+-  }
+-
+-  html += '</div>';
+-  container.innerHTML = html;
+-}
+-
+-function formatDate(dateString) {
+-  if (!dateString) return '';
+-  const date = new Date(dateString);
+-  return date.toLocaleString();
+-}
+-
+-function escapeHTML(str) {
+-  if (!str) return '';
+-  const div = document.createElement('div');
+-  div.textContent = str;
+-  return div.innerHTML;
+-}
+diff --git a/web_src/js/index.js b/web_src/js/index.js
+index d96ffdf73d..8701385e92 100644
+--- a/web_src/js/index.js
++++ b/web_src/js/index.js
+@@ -8,7 +8,6 @@ import {initDashboardRepoList} from './features/dashboard-repo-list.ts';
+ import {initGlobalCopyToClipboardListener} from './features/clipboard.js';
+ import {initContextPopups} from './features/contextpopup.js';
+ import {initRepoGraphGit} from './features/repo-graph.js';
+-import {initRepoDevTree} from './features/repo-devtree.js';
+ import {initHeatmap} from './features/heatmap.js';
+ import {initImageDiff} from './features/imagediff.js';
+ import {initRepoMigration} from './features/repo-migration.js';
+@@ -153,7 +152,6 @@ onDomReady(() => {
+   initRepoDiffCommitBranchesAndTags();
+   initRepoEditor();
+   initRepoGraphGit();
+-  initRepoDevTree();
+   initRepoIssueContentHistory();
+   initRepoIssueDue();
+   initRepoIssueList();

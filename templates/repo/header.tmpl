@@ -96,6 +96,13 @@
 					</a>
 				{{end}}
 
+				{{/* Dev Tree tab */}}
+				{{if and (.Permission.CanRead $.UnitTypeCode) (not .Repository.IsEmpty)}}
+					<a class="{{if .PageIsDevTree}}active {{end}}item" href="{{.RepoLink}}/devtree">
+						{{svg "octicon-git-branch"}} {{ctx.Locale.Tr "repo.devtree"}}
+					</a>
+				{{end}}
+
 				{{if .Permission.CanRead $.UnitTypeIssues}}
 					<a class="{{if .PageIsIssueList}}active {{end}}item" href="{{.RepoLink}}/issues">
 						{{svg "octicon-issue-opened"}} {{ctx.Locale.Tr "repo.issues"}}

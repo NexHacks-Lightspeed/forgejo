@@ -8,6 +8,7 @@ import {initDashboardRepoList} from './features/dashboard-repo-list.ts';
 import {initGlobalCopyToClipboardListener} from './features/clipboard.js';
 import {initContextPopups} from './features/contextpopup.js';
 import {initRepoGraphGit} from './features/repo-graph.js';
+import {initRepoDevTree} from './features/repo-devtree.js';
 import {initHeatmap} from './features/heatmap.js';
 import {initImageDiff} from './features/imagediff.js';
 import {initRepoMigration} from './features/repo-migration.js';
@@ -152,6 +153,7 @@ onDomReady(() => {
   initRepoDiffCommitBranchesAndTags();
   initRepoEditor();
   initRepoGraphGit();
+  initRepoDevTree();
   initRepoIssueContentHistory();
   initRepoIssueDue();
   initRepoIssueList();
