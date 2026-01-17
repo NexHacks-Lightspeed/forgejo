@@ -1,0 +1,132 @@
+name: Build and Push Docker Image
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+# Cancel in-progress runs for the same branch/PR to save resources
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: babusidharth/nexhacks-forgejo
+
+jobs:
+  # Build job: runs on both PR and push to main
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    outputs:
+      pr_tag: ${{ steps.tags.outputs.pr_tag }}
+      sha_tag: ${{ steps.tags.outputs.sha_tag }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Calculate tags
+        id: tags
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          echo "sha_tag=sha-${SHA_SHORT}" >> $GITHUB_OUTPUT
+          
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "pr_tag=pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.sha_tag }}
+            ${{ github.event_name == 'pull_request' && format('{0}/{1}:{2}', env.REGISTRY, env.IMAGE_NAME, steps.tags.outputs.pr_tag) || '' }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Promote job: only runs on push to main, retags the image instead of rebuilding
+  promote:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate version
+        id: version
+        run: |
+          git fetch --tags
+          
+          # Get the most recent semver tag or default to 0.0.0
+          LATEST_TAG=$(git tag --sort=-v:refname | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1)
+          LATEST_TAG="${LATEST_TAG:-0.0.0}"
+          
+          # Parse and increment patch version
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_TAG"
+          NEW_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "Promoting to version: $NEW_VERSION"
+
+      - name: Create and push git tag
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$NEW_VERSION" -m "Release $NEW_VERSION"
+          git push origin "$NEW_VERSION"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Promote image (retag as version + latest)
+        env:
+          SOURCE_TAG: ${{ needs.build.outputs.sha_tag }}
+          NEW_VERSION: ${{ steps.version.outputs.new_version }}
+        run: |
+          SOURCE_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${SOURCE_TAG}"
+          
+          echo "Pulling ${SOURCE_IMAGE}..."
+          docker pull "${SOURCE_IMAGE}"
+          
+          echo "Tagging as ${NEW_VERSION} and latest..."
+          docker tag "${SOURCE_IMAGE}" "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${NEW_VERSION}"
+          docker tag "${SOURCE_IMAGE}" "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          
+          echo "Pushing tags..."
+          docker push "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${NEW_VERSION}"
+          docker push "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          
+          echo "Successfully promoted ${SOURCE_TAG} -> ${NEW_VERSION}, latest"
