@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	auth_model "forgejo.org/models/auth"
 	"forgejo.org/models/db"
 	db_install "forgejo.org/models/db/install"
 	"forgejo.org/models/gitea_migrations"
@@ -29,6 +30,7 @@ import (
 	"forgejo.org/modules/setting"
 	"forgejo.org/modules/templates"
 	"forgejo.org/modules/translation"
+	"forgejo.org/modules/util"
 	"forgejo.org/modules/web"
 	"forgejo.org/modules/web/middleware"
 	"forgejo.org/routers/common"
@@ -567,6 +569,83 @@ func SubmitInstall(ctx *context.Context) {
 		if err = ctx.Session.Release(); err != nil {
 			ctx.RenderWithErr(ctx.Tr("install.save_config_failed", err), tplInstall, &form)
 			return
+		}
+	}
+
+	// Create service account if configured
+	if setting.Service.ServiceAccountUsername != "" {
+		serviceUser := &user_model.User{
+			Name:      setting.Service.ServiceAccountUsername,
+			Email:     fmt.Sprintf("%s@localhost", setting.Service.ServiceAccountUsername),
+			Passwd:    util.CryptoRandomString(util.RandomStringHigh),
+			Type:      user_model.UserTypeBot,
+			IsActive:  true,
+			IsAdmin:   false,
+			LoginType: 0,
+		}
+
+		// Allow custom password via environment variable
+		customPasswd := os.Getenv("FORGEJO__SERVICE__SERVICE_ACCOUNT_PASSWORD")
+		if customPasswd != "" {
+			serviceUser.Passwd = customPasswd
+		}
+
+		overwriteDefault := &user_model.CreateUserOverwriteOptions{
+			IsRestricted: optional.Some(false),
+			IsActive:     optional.Some(true),
+		}
+
+		if err = user_model.CreateUser(ctx, serviceUser, overwriteDefault); err != nil {
+			if !user_model.IsErrUserAlreadyExist(err) {
+				log.Error("Failed to create service account: %v", err)
+			} else {
+				log.Info("Service account %q already exists", setting.Service.ServiceAccountUsername)
+			}
+		} else {
+			log.Info("Created service account %q", setting.Service.ServiceAccountUsername)
+			if customPasswd == "" {
+				log.Warn("Service account %q was created with a random password. Use FORGEJO__SERVICE__SERVICE_ACCOUNT_PASSWORD env var to set a custom password.", setting.Service.ServiceAccountUsername)
+			}
+
+			// Create access token for service account if token is provided via env var
+			serviceAccountToken := os.Getenv("FORGEJO__SERVICE__SERVICE_ACCOUNT_TOKEN")
+			if serviceAccountToken != "" {
+				// Validate token format: must be 40-character hex string
+				if len(serviceAccountToken) != 40 {
+					log.Error("SERVICE_ACCOUNT_TOKEN must be exactly 40 hex characters, got %d", len(serviceAccountToken))
+				} else {
+					validHex := true
+					for _, c := range serviceAccountToken {
+						if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+							validHex = false
+							break
+						}
+					}
+					if !validHex {
+						log.Error("SERVICE_ACCOUNT_TOKEN must contain only hex characters (0-9, a-f)")
+					} else {
+						// Normalize to lowercase
+						serviceAccountToken = strings.ToLower(serviceAccountToken)
+
+						// Create access token with full permissions
+						token := &auth_model.AccessToken{
+							UID:            serviceUser.ID,
+							Name:           "service-account-token",
+							Scope:          auth_model.AccessTokenScopeAll,
+							TokenSalt:      util.CryptoRandomString(util.RandomStringMedium),
+							TokenLastEight: serviceAccountToken[len(serviceAccountToken)-8:],
+						}
+						token.TokenHash = auth_model.HashToken(serviceAccountToken, token.TokenSalt)
+
+						// Insert directly (don't use NewAccessToken which generates a new token)
+						if _, err := db.GetEngine(ctx).Insert(token); err != nil {
+							log.Error("Failed to create access token for service account: %v", err)
+						} else {
+							log.Info("Created access token for service account %q", setting.Service.ServiceAccountUsername)
+						}
+					}
+				}
+			}
 		}
 	}
 
