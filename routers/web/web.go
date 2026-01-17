@@ -1631,6 +1631,9 @@ func registerRoutes(m *web.Route) {
 			m.Get("/cherry-pick/{sha:([a-f0-9]{4,64})$}", repo.SetEditorconfigIfExists, repo.CherryPick)
 		}, repo.MustBeNotEmpty, context.RepoRef(), reqRepoCodeReader)
 
+		// Dev Tree
+		m.Get("/devtree", context.RepoRef(), repo.MustBeNotEmpty, repo.DevTree)
+
 		m.Group("", func() {
 			m.Get("/rss/branch/*", feed.RenderBranchFeed("rss"))
 			m.Get("/atom/branch/*", feed.RenderBranchFeed("atom"))
@@ -1654,7 +1657,7 @@ func registerRoutes(m *web.Route) {
 		m.Post("/sync_fork", context.RepoMustNotBeArchived(), repo.MustBeNotEmpty, reqRepoCodeWriter, repo.SyncFork)
 	}, ignSignIn, context.RepoAssignment, context.UnitTypes())
 
-	m.Post("/{username}/{reponame}/lastcommit/*", ignSignIn, context.RepoAssignment, context.UnitTypes(), context.RepoRefByType(context.RepoRefCommit), reqRepoCodeReader, repo.LastCommit)
+	m.Post("/{username}/{reponame}/lastcommit/*", reqSignIn, context.RepoAssignment, context.UnitTypes(), context.RepoRefByType(context.RepoRefCommit), reqRepoCodeReader, repo.LastCommit)
 
 	m.Group("/{username}/{reponame}", func() {
 		if !setting.Repository.DisableStars {

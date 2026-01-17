@@ -1355,6 +1355,7 @@ func Routes() *web.Route {
 						m.Get("/pull", repo.GetCommitPullRequest)
 					}, context.ReferencesGitRepo())
 				}, reqRepoReader(unit.TypeCode))
+				m.Get("/graph", context.ReferencesGitRepo(), reqRepoReader(unit.TypeCode), repo.GetCommitGraph)
 				m.Group("/git", func() {
 					m.Group("/commits", func() {
 						m.Get("/{sha}", repo.GetSingleCommit)
@@ -1695,8 +1696,8 @@ func Routes() *web.Route {
 					Delete(admin.DeleteHook)
 			})
 			m.Group("/runners", func() {
-				m.Get("/registration-token", admin.GetRegistrationToken)
-				m.Get("/jobs", admin.SearchActionRunJobs)
+				m.Get("/registration-token", admin.GetRegistrationToken) //nolint:staticcheck
+				m.Get("/jobs", admin.SearchActionRunJobs)                //nolint:staticcheck
 			})
 			if setting.Quota.Enabled {
 				m.Group("/quota", func() {

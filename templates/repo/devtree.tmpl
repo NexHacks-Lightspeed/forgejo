@@ -1,0 +1,124 @@
+{{template "base/head" .}}
+<div role="main" aria-label="{{.Title}}" class="page-content repository devtree">
+	{{template "repo/header" .}}
+	{{template "base/alert" .}}
+
+	{{if .IsEmptyRepo}}
+		<div class="ui center aligned segment">
+			<h3>{{ctx.Locale.Tr "repo.devtree.empty_repo"}}</h3>
+		</div>
+	{{else}}
+		<div id="devtree-container" class="colored" data-owner="{{.Repository.OwnerName}}" data-repo="{{.Repository.Name}}">
+			<div id="devtree-canvas">
+				<div id="loading" class="ui active centered inline loader" style="margin: 100px 0;"></div>
+				<div id="error" class="ui negative message" style="display: none;">
+					<div class="header">{{ctx.Locale.Tr "repo.devtree.error"}}</div>
+					<p id="error-text"></p>
+				</div>
+				<div id="devtree-graph-container"></div>
+				<div class="zoom-controls">
+					<button id="zoom-in" class="ui icon button" title="Zoom In">+</button>
+					<button id="zoom-reset" class="ui icon button" title="Reset View">⊙</button>
+					<button id="zoom-out" class="ui icon button" title="Zoom Out">−</button>
+				</div>
+				<!-- Commit detail side panel -->
+				<div id="commit-detail-overlay" class="devtree-overlay"></div>
+				<div id="commit-detail-panel" class="devtree-panel">
+					<button class="close-panel ui icon button">×</button>
+					<div class="panel-content">
+						<div class="loading">Loading...</div>
+					</div>
+				</div>
+
+				<!-- Agent status badge -->
+				<div id="agent-status-badge" class="agent-status-badge" style="display: none;">
+					<div class="status-icon"></div>
+					<div class="status-text">Idle</div>
+					<div class="progress-bar">
+						<div class="progress-bar-fill" style="width: 0%;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- PR Review Panel (left side) -->
+		<div id="pr-review-overlay" class="pr-review-overlay"></div>
+		<div id="pr-review-panel" class="pr-review-panel">
+			<button class="close-panel ui icon button">×</button>
+			<div class="panel-content">
+				<div class="loading">Loading PR details...</div>
+			</div>
+		</div>
+	{{end}}
+</div>
+
+<!-- Create Issue Modal -->
+<div id="create-issue-modal" class="ui modal">
+	<div class="header">Create Issue from Commit</div>
+	<div class="content">
+		<form id="create-issue-form" class="ui form form-fetch-action" method="post" action="{{.RepoLink}}/issues/new">
+			<div class="field required">
+				<label>Title</label>
+				<input type="text" name="title" required maxlength="255" placeholder="Issue title" autocomplete="off">
+			</div>
+			<div class="field">
+				<label>Description</label>
+				<textarea name="content" rows="6" placeholder="Describe the issue or feature..."></textarea>
+			</div>
+			<div class="field">
+				<label>Base Commit (will be added to description)</label>
+				<input type="text" readonly id="issue-base-sha" placeholder="Select a commit from the graph" style="background: #f5f5f5;">
+			</div>
+			<input type="hidden" name="label_ids" id="devtree-label-ids" value="">
+			<input type="hidden" name="milestone_id" id="devtree-milestone-id" value="">
+		</form>
+	</div>
+	<div class="actions">
+		<button class="ui cancel button">Cancel</button>
+		<button class="ui primary button" type="submit" form="create-issue-form">Create Issue</button>
+	</div>
+</div>
+
+<!-- Deploy Agent Modal -->
+<div id="deploy-agent-modal" class="ui modal">
+	<div class="header">Deploy Coding Agent</div>
+	<div class="content">
+		<form id="deploy-agent-form" class="ui form">
+			<div class="field required">
+				<label>Select Issue</label>
+				<div class="ui search selection dropdown" id="agent-issue">
+					<input type="hidden" name="issue_id" required>
+					<i class="dropdown icon"></i>
+					<div class="default text">Select an open issue</div>
+					<div class="menu"></div>
+				</div>
+			</div>
+			<div class="field">
+				<label>Base Commit</label>
+				<input type="text" name="base_sha" readonly id="agent-base-sha" placeholder="Select a commit from the graph">
+			</div>
+			<div class="field">
+				<label>Simulation Speed</label>
+				<div class="ui selection dropdown" id="agent-speed">
+					<input type="hidden" name="simulation_speed" value="normal">
+					<i class="dropdown icon"></i>
+					<div class="default text">Normal</div>
+					<div class="menu">
+						<div class="item" data-value="fast">Fast (10x speed)</div>
+						<div class="item" data-value="normal">Normal</div>
+						<div class="item" data-value="slow">Slow (0.5x speed)</div>
+					</div>
+				</div>
+			</div>
+			<div class="ui info message">
+				<p><strong>Note:</strong> This is a simulated agent for testing purposes. It will simulate making commits and creating a PR, but won't make actual changes to the repository.</p>
+			</div>
+		</form>
+	</div>
+	<div class="actions">
+		<button class="ui cancel button">Cancel</button>
+		<button class="ui primary button" id="deploy-agent-submit">Deploy Agent</button>
+	</div>
+</div>
+
+{{template "base/footer" .}}
