@@ -20,6 +20,7 @@
 					<button id="zoom-in" class="ui icon button" title="Zoom In">+</button>
 					<button id="zoom-reset" class="ui icon button" title="Reset View">⊙</button>
 					<button id="zoom-out" class="ui icon button" title="Zoom Out">−</button>
+					<button id="fullscreen-toggle" class="ui icon button" title="Toggle Fullscreen">⛶</button>
 				</div>
 				<!-- Commit detail side panel -->
 				<div id="commit-detail-overlay" class="devtree-overlay"></div>
@@ -38,15 +39,24 @@
 						<div class="progress-bar-fill" style="width: 0%;"></div>
 					</div>
 				</div>
-			</div>
-		</div>
 
-		<!-- PR Review Panel (left side) -->
-		<div id="pr-review-overlay" class="pr-review-overlay"></div>
-		<div id="pr-review-panel" class="pr-review-panel">
-			<button class="close-panel ui icon button">×</button>
-			<div class="panel-content">
-				<div class="loading">Loading PR details...</div>
+				<!-- PR Review Panel (left side) -->
+				<div id="pr-review-overlay" class="pr-review-overlay"></div>
+				<div id="pr-review-panel" class="pr-review-panel">
+					<button class="close-panel ui icon button">×</button>
+					<div class="panel-content">
+						<div class="loading">Loading PR details...</div>
+					</div>
+				</div>
+
+				<!-- PR Detail Panel (right side) - minimal, modern -->
+				<div id="pr-detail-overlay-right" class="pr-detail-overlay-right"></div>
+				<div id="pr-detail-panel-right" class="pr-detail-panel-right">
+					<button class="close-panel ui icon button">×</button>
+					<div class="panel-content">
+						<div class="loading">Loading PR details...</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	{{end}}
