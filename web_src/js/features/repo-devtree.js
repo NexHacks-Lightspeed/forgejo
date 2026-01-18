@@ -19,8 +19,8 @@ const BRANCH_COLORS_HIGHLIGHT = [
 ];
 
 // Layout dimensions (Railway-style card nodes)
-const COLUMN_SPACING = 200;  // Wide spacing for card nodes
-const ROW_SPACING = 70;      // Vertical spacing for cards
+const COLUMN_SPACING = 300;  // Wide spacing for card nodes (increased for better branch separation)
+const ROW_SPACING = 120;     // Vertical spacing for cards (increased from 70)
 const CARD_WIDTH = 180;      // Card width
 const CARD_HEIGHT = 60;      // Card height
 const CARD_RADIUS = 8;       // Card corner radius
@@ -31,7 +31,7 @@ const STROKE_WIDTH = 2.5;    // Path stroke width
 const DEFAULT_SCALE = 1.0;
 const MIN_SCALE = 0.3;
 const MAX_SCALE = 3.0;
-const ZOOM_SPEED = 0.15;
+const ZOOM_SPEED = 0.08;  // Reduced from 0.15 for less sensitivity
 const PAN_THRESHOLD = 5; // pixels before treating as pan vs click
 
 // State management class
@@ -54,6 +54,8 @@ let globalOwner = null;
 let globalRepo = null;
 let panZoomGroup = null;
 let currentViewBox = null; // Store viewBox for reset
+let globalFlows = []; // Store flows for branch name lookups
+let globalCommits = []; // Store commits for lookups
 
 export function initRepoDevTree() {
   const container = document.getElementById('devtree-container');
@@ -129,9 +131,11 @@ function createCommitCard(commit, x, y, colorNum) {
   // Detect commit type
   const isMerge = commit.parents && commit.parents.length > 1;
   const isTagged = commit.refs && commit.refs.length > 0;
+  const hasIssues = commit.linked_issues && commit.linked_issues.length > 0;
 
   if (isMerge) cardGroup.classList.add('merge-commit');
   if (isTagged) cardGroup.classList.add('tagged-commit');
+  if (hasIssues) cardGroup.classList.add('has-issues');
 
   // Get color for this commit
   const color = BRANCH_COLORS[colorNum % BRANCH_COLORS.length];
@@ -148,6 +152,51 @@ function createCommitCard(commit, x, y, colorNum) {
   rect.setAttribute('stroke', color);
   rect.setAttribute('stroke-width', '1.5');
   cardGroup.appendChild(rect);
+
+  // Add issue indicator icon if commit has linked issues
+  if (hasIssues) {
+    const iconX = x - CARD_WIDTH / 2 + 8;
+    const iconY = y - CARD_HEIGHT / 2 + 8;
+
+    // Create exclamation mark icon (no background)
+    const iconText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    iconText.setAttribute('x', iconX);
+    iconText.setAttribute('y', iconY + 1);
+    iconText.setAttribute('text-anchor', 'middle');
+    iconText.setAttribute('dominant-baseline', 'middle');
+    iconText.setAttribute('font-size', '14');
+    iconText.setAttribute('font-weight', '900');
+    iconText.setAttribute('fill', '#fb923c');
+    iconText.setAttribute('class', 'issue-indicator-icon');
+    iconText.textContent = '!';
+    cardGroup.appendChild(iconText);
+
+    // Add issue count badge
+    if (commit.linked_issues.length > 1) {
+      const badgeX = iconX + 7;
+      const badgeY = iconY - 7;
+
+      const badge = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      badge.setAttribute('cx', badgeX);
+      badge.setAttribute('cy', badgeY);
+      badge.setAttribute('r', '6');
+      badge.setAttribute('fill', '#dc2626');
+      badge.setAttribute('stroke', '#0f0f0f');
+      badge.setAttribute('stroke-width', '1.5');
+      cardGroup.appendChild(badge);
+
+      const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      badgeText.setAttribute('x', badgeX);
+      badgeText.setAttribute('y', badgeY + 1);
+      badgeText.setAttribute('text-anchor', 'middle');
+      badgeText.setAttribute('dominant-baseline', 'middle');
+      badgeText.setAttribute('font-size', '8');
+      badgeText.setAttribute('font-weight', '700');
+      badgeText.setAttribute('fill', '#ffffff');
+      badgeText.textContent = commit.linked_issues.length;
+      cardGroup.appendChild(badgeText);
+    }
+  }
 
   // Add commit hash (short)
   const shortSha = commit.short_sha || commit.sha.substring(0, 7);
@@ -188,6 +237,270 @@ function createCommitCard(commit, x, y, colorNum) {
 
   return cardGroup;
 }
+// Helper: Determine origin branch based on column position
+// Extract branch name from commit's refs (actual git references)
+function extractBranchFromRefs(commit) {
+  if (!commit.refs || commit.refs.length === 0) return null;
+
+  // Find first branch ref (not tag)
+  const branchRef = commit.refs.find(ref => ref.startsWith('refs/heads/'));
+  if (branchRef) {
+    return branchRef.replace('refs/heads/', '');
+  }
+  return null;
+}
+
+function determineOriginBranch(commit, column) {
+  // First, try to use the actual git refs
+  const refBranch = extractBranchFromRefs(commit);
+
+  if (column === 0) {
+    // Column 0 is main branch
+    if (refBranch === 'main' || refBranch === 'master') return refBranch;
+    const mainBranch = commit.branches?.find(b => b === 'main' || b === 'master');
+    return mainBranch || refBranch || 'main';
+  } else {
+    // Other columns: prefer non-main branches
+    // Use refs first, then API branches
+    if (refBranch && refBranch !== 'main' && refBranch !== 'master') {
+      return refBranch;
+    }
+
+    const nonMainBranch = commit.branches?.find(b => b !== 'main' && b !== 'master');
+    if (nonMainBranch) return nonMainBranch;
+
+    // If only main/master in branches, use refs anyway
+    if (refBranch) return refBranch;
+
+    // Last resort: use first branch or mark for propagation
+    return commit.branches?.[0] || null;  // null = needs propagation
+  }
+}
+
+// Create column-based boundaries - commits grouped by (column, branch) with stack tracking
+function createColumnBasedBoundaries(commits) {
+  // Step 1: Determine origin branch for each commit based on column
+  // Each commit gets EXACTLY ONE label based on where it was created
+  commits.forEach(commit => {
+    commit.origin_branch = determineOriginBranch(commit, commit.column);
+  });
+
+  // Step 1.5: Propagate branch names within columns for commits without labels
+  const columnGroups = new Map();
+  commits.forEach(commit => {
+    if (!columnGroups.has(commit.column)) {
+      columnGroups.set(commit.column, []);
+    }
+    columnGroups.get(commit.column).push(commit);
+  });
+
+  columnGroups.forEach((columnCommits, column) => {
+    // Sort by row
+    columnCommits.sort((a, b) => a.row - b.row);
+
+    // Find first commit with a branch name and propagate downward
+    let activeBranch = null;
+
+    // First pass: find any commit with refs to establish branch name
+    for (const commit of columnCommits) {
+      if (commit.origin_branch && commit.origin_branch !== null) {
+        activeBranch = commit.origin_branch;
+        break;
+      }
+    }
+
+    // Fallback: use column 0 = main, others = first non-main from API
+    if (!activeBranch) {
+      if (column === 0) {
+        activeBranch = 'main';
+      } else {
+        // Find any commit with a non-main branch
+        for (const commit of columnCommits) {
+          const nonMain = commit.branches?.find(b => b !== 'main' && b !== 'master');
+          if (nonMain) {
+            activeBranch = nonMain;
+            break;
+          }
+        }
+        if (!activeBranch) {
+          activeBranch = columnCommits[0]?.branches?.[0] || `column-${column}`;
+        }
+      }
+    }
+
+    // Second pass: assign branch to all commits, updating when we see refs change
+    for (const commit of columnCommits) {
+      if (commit.origin_branch && commit.origin_branch !== null) {
+        activeBranch = commit.origin_branch;
+      }
+      commit.origin_branch = activeBranch;
+    }
+  });
+
+  // Log assignments
+  commits.forEach(commit => {
+    console.log(`[Label Assignment] Commit ${commit.sha.substring(0, 7)} (col ${commit.column}, row ${commit.row}): refs=[${commit.refs?.join(', ') || 'none'}], API branches=[${commit.branches?.join(', ') || 'none'}] → origin_branch='${commit.origin_branch}'`);
+  });
+
+  // Step 2: Create boundaries from the already-grouped columns
+  const boundaries = [];
+
+  columnGroups.forEach((columnCommits, column) => {
+    // Sort by row (top to bottom = oldest to newest)
+    columnCommits.sort((a, b) => a.row - b.row);
+
+    // Track active branch boxes: branch -> {startIdx, commits[]}
+    const activeBranches = new Map();
+
+    console.log(`[Column ${column}] Processing ${columnCommits.length} commits`);
+
+    for (let i = 0; i < columnCommits.length; i++) {
+      const commit = columnCommits[i];
+      const nextCommit = columnCommits[i + 1];
+
+      // Use ONLY origin_branch (single label based on column)
+      const currentOriginBranch = commit.origin_branch;
+      const nextOriginBranch = nextCommit?.origin_branch;
+
+      console.log(`  [Row ${commit.row}, Col ${column}] Commit ${commit.sha.substring(0, 7)} origin_branch='${currentOriginBranch}'`);
+
+      // If this origin branch is not active, start tracking it
+      if (!activeBranches.has(currentOriginBranch)) {
+        activeBranches.set(currentOriginBranch, {
+          startIdx: i,
+          commits: []
+        });
+        console.log(`    → Starting branch '${currentOriginBranch}'`);
+      }
+
+      // Add current commit to this branch's tracking
+      activeBranches.get(currentOriginBranch).commits.push(commit);
+
+      // Close branch if next commit has different origin_branch (or end of column)
+      if (!nextCommit || nextOriginBranch !== currentOriginBranch) {
+        const branchData = activeBranches.get(currentOriginBranch);
+        if (branchData.commits.length >= 2) {
+          boundaries.push({
+            branch: currentOriginBranch,
+            commits: branchData.commits,
+            column: column
+          });
+          console.log(`    → Closing branch '${currentOriginBranch}' - ${branchData.commits.length} commits (rows ${branchData.commits[0].row}-${commit.row})`);
+        } else {
+          console.log(`    → Closing branch '${currentOriginBranch}' - only ${branchData.commits.length} commit(s), skipping`);
+        }
+        activeBranches.delete(currentOriginBranch);
+      }
+    }
+  });
+
+  console.log(`[Column-Based Boundaries] Created ${boundaries.length} boundaries from ${columnGroups.size} columns`);
+  boundaries.forEach(b => {
+    console.log(`  Column ${b.column}, branch '${b.branch}': ${b.commits.length} commits (rows ${b.commits[0].row}-${b.commits[b.commits.length-1].row})`);
+  });
+
+  return boundaries;
+}
+
+function drawBranchBoundaries(commits, boundariesGroup) {
+  // Create column-based boundaries
+  const boundaries = createColumnBasedBoundaries(commits);
+
+  console.log(`[Boundary Drawing] Drawing ${boundaries.length} column-based boundaries`);
+
+  let colorIndex = 0;
+
+  boundaries.forEach(({branch, commits: boundaryCommits, column}) => {
+    // Calculate bounding box around all commits in this boundary
+    const positions = boundaryCommits.map(c => ({
+      x: c.column * COLUMN_SPACING + COLUMN_SPACING,
+      y: c.row * ROW_SPACING + (ROW_SPACING / 2)
+    }));
+
+    const minX = Math.min(...positions.map(p => p.x)) - CARD_WIDTH / 2 - 20;
+    const maxX = Math.max(...positions.map(p => p.x)) + CARD_WIDTH / 2 + 20;
+    const minY = Math.min(...positions.map(p => p.y)) - CARD_HEIGHT / 2 - 20;
+    const maxY = Math.max(...positions.map(p => p.y)) + CARD_HEIGHT / 2 + 20;
+
+    const width = maxX - minX;
+    const height = maxY - minY;
+
+    // Get branch color (cycle through color palette)
+    const branchColor = getBranchColor(colorIndex++);
+
+    // Draw dashed boundary rectangle
+    const boundary = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    boundary.setAttribute('x', minX);
+    boundary.setAttribute('y', minY);
+    boundary.setAttribute('width', width);
+    boundary.setAttribute('height', height);
+    boundary.setAttribute('rx', '12');
+    boundary.setAttribute('ry', '12');
+    boundary.setAttribute('fill', 'none');
+    boundary.setAttribute('stroke', branchColor);
+    boundary.setAttribute('stroke-width', '1.5');
+    boundary.setAttribute('stroke-dasharray', '8 6');
+    boundary.setAttribute('opacity', '0.5');
+    boundary.setAttribute('class', 'branch-boundary');
+    boundary.setAttribute('data-branch', branch);
+    boundary.setAttribute('data-column', column);
+    boundariesGroup.appendChild(boundary);
+
+    // Add branch label with branch name
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', minX + 12);
+    label.setAttribute('y', minY - 6);
+    label.setAttribute('class', 'branch-label');
+    label.setAttribute('fill', branchColor);
+    label.setAttribute('font-size', '11');
+    label.setAttribute('font-weight', '600');
+    label.setAttribute('opacity', '0.9');
+    label.textContent = branch;
+    boundariesGroup.appendChild(label);
+
+    console.log(`[Boundary Drawing] Drew boundary for column ${column}, branch '${branch}' (${boundaryCommits.length} commits) at (${minX.toFixed(0)}, ${minY.toFixed(0)}) - (${maxX.toFixed(0)}, ${maxY.toFixed(0)})`);
+  });
+
+  console.log(`[Boundary Drawing] Summary: Drew ${boundaries.length} column-based boundaries`);
+}
+
+async function fetchAllIssuesWithCommits(owner, repo) {
+  try {
+    // Fetch all issues (open and closed) from the repository
+    const response = await GET(`/api/v1/repos/${owner}/${repo}/issues?state=all&limit=100`);
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to fetch issues:', error);
+    return [];
+  }
+}
+
+function attachIssuesToCommits(commits, issues) {
+  // Create a map of commit SHA to linked issues
+  const commitIssueMap = new Map();
+
+  // For each issue, check if it mentions any commit SHAs in body or title
+  issues.forEach(issue => {
+    const searchText = `${issue.title} ${issue.body || ''}`;
+
+    commits.forEach(commit => {
+      // Check if the issue mentions this commit (full SHA or short SHA)
+      const shortSha = commit.sha.substring(0, 7);
+      if (searchText.includes(commit.sha) || searchText.includes(shortSha)) {
+        if (!commitIssueMap.has(commit.sha)) {
+          commitIssueMap.set(commit.sha, []);
+        }
+        commitIssueMap.get(commit.sha).push(issue);
+      }
+    });
+  });
+
+  // Attach linked issues to each commit
+  commits.forEach(commit => {
+    commit.linked_issues = commitIssueMap.get(commit.sha) || [];
+  });
+}
 
 async function loadCommitGraph(owner, repo, container) {
   const loading = document.getElementById('loading');
@@ -195,8 +508,16 @@ async function loadCommitGraph(owner, repo, container) {
   const graphContainer = document.getElementById('devtree-graph-container');
 
   try {
-    const graphData = await fetchGraphData(owner, repo, 1);
-    renderGraph(graphContainer, graphData, owner, repo);
+    // Fetch graph data and issues in parallel
+    const [graphData, issues] = await Promise.all([
+      fetchGraphData(owner, repo, 1),
+      fetchAllIssuesWithCommits(owner, repo)
+    ]);
+
+    // Attach issues to commits before rendering
+    attachIssuesToCommits(graphData.commits, issues);
+
+    await renderGraph(graphContainer, graphData, owner, repo);
     loading.style.display = 'none';
   } catch (error) {
     console.error('Failed to load commit graph:', error);
@@ -207,30 +528,206 @@ async function loadCommitGraph(owner, repo, container) {
   }
 }
 
-function renderGraph(container, graphData, owner, repo) {
+// API: Fetch all branches
+async function fetchAllBranches(owner, repo) {
+  try {
+    const response = await GET(`/api/v1/repos/${owner}/${repo}/branches`);
+    if (!response.ok) {
+      console.error('Failed to fetch branches:', response.status);
+      return [];
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    return [];
+  }
+}
+
+// API: Fetch commits for a specific branch
+async function fetchCommitsForBranch(owner, repo, branchName) {
+  try {
+    const response = await GET(`/api/v1/repos/${owner}/${repo}/commits?sha=${encodeURIComponent(branchName)}&limit=0`);
+    if (!response.ok) {
+      console.error(`Failed to fetch commits for branch ${branchName}:`, response.status);
+      return [];
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching commits for branch ${branchName}:`, error);
+    return [];
+  }
+}
+
+// API: Fetch detailed commit information including parents
+async function fetchCommitDetails(owner, repo, sha) {
+  try {
+    const response = await GET(`/api/v1/repos/${owner}/${repo}/git/commits/${sha}`);
+    if (!response.ok) {
+      console.error(`Failed to fetch commit details for ${sha}:`, response.status);
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching commit details for ${sha}:`, error);
+    return null;
+  }
+}
+
+// Build commit to branch affiliation map
+async function buildCommitBranchMap(owner, repo) {
+  // Fetch all branches
+  const branches = await fetchAllBranches(owner, repo);
+  console.log(`Found ${branches.length} branches:`, branches.map(b => b.name));
+
+  // Map: commit SHA -> Set of branch names
+  const commitToBranches = new Map();
+
+  // For each branch, fetch its commits
+  for (const branch of branches) {
+    const branchName = branch.name;
+    const commits = await fetchCommitsForBranch(owner, repo, branchName);
+
+    console.log(`Branch ${branchName}: ${commits.length} commits`);
+
+    // Add each commit to the map
+    for (const commit of commits) {
+      const sha = commit.sha || commit.id;
+      if (!commitToBranches.has(sha)) {
+        commitToBranches.set(sha, new Set());
+      }
+      commitToBranches.get(sha).add(branchName);
+    }
+  }
+
+  // Log summary of branch affiliations
+  console.log(`[Branch Affiliation] Total unique commits: ${commitToBranches.size}`);
+  const multibranchCommits = Array.from(commitToBranches.entries()).filter(([, branches]) => branches.size > 1);
+  console.log(`[Branch Affiliation] Commits in multiple branches: ${multibranchCommits.length}`);
+  if (multibranchCommits.length > 0) {
+    console.log('[Branch Affiliation] Multi-branch commits:', multibranchCommits.slice(0, 5).map(([sha, branches]) => ({
+      sha: sha.substring(0, 7),
+      branches: Array.from(branches)
+    })));
+  }
+
+  return commitToBranches;
+}
+
+// Helper: Extract branch name from commit refs
+function extractBranchName(commit) {
+  if (!commit.refs || commit.refs.length === 0) return null;
+
+  // Find first branch ref (ignore tags)
+  const branchRef = commit.refs.find(ref => ref.startsWith('refs/heads/'));
+  return branchRef ? branchRef.replace('refs/heads/', '') : null;
+}
+
+// Enhanced layout function - affiliates commits with branches using API
+async function prepareGraphLayout(commits, owner, repo) {
+  // Build commit map for lookups
+  const commitMap = new Map();
+  commits.forEach(c => commitMap.set(c.sha, c));
+
+  // Fetch commit-to-branch affiliations from API
+  console.log('Fetching branch affiliations...');
+  const commitToBranches = await buildCommitBranchMap(owner, repo);
+
+  // Affiliate each commit with branches
+  commits.forEach(commit => {
+    const branches = commitToBranches.get(commit.sha);
+    if (branches && branches.size > 0) {
+      commit.branches = Array.from(branches);
+      commit.branch_name = commit.branches[0]; // Primary branch (first one)
+    } else {
+      // Fallback to refs-based extraction
+      commit.branch_name = extractBranchName(commit) || 'unknown';
+      commit.branches = [commit.branch_name];
+    }
+  });
+
+  // Log commit affiliation summary
+  const affiliatedCommits = commits.filter(c => c.branches && c.branches.length > 0);
+  const fallbackCommits = commits.filter(c => c.branch_name === 'unknown' || !commitToBranches.has(c.sha));
+  console.log(`[Commit Affiliation] Total commits: ${commits.length}`);
+  console.log(`[Commit Affiliation] API-affiliated: ${affiliatedCommits.length - fallbackCommits.length}`);
+  console.log(`[Commit Affiliation] Fallback/Unknown: ${fallbackCommits.length}`);
+
+  // Sample affiliations
+  const sampleCommits = commits.slice(0, 3);
+  console.log('[Commit Affiliation] Sample commits:', sampleCommits.map(c => ({
+    sha: c.sha.substring(0, 7),
+    branches: c.branches,
+    primary: c.branch_name
+  })));
+
+  // Fetch parent information from API for each commit
+  console.log('Fetching commit details for parent information...');
+  for (const commit of commits) {
+    const commitDetails = await fetchCommitDetails(owner, repo, commit.sha);
+    if (commitDetails && commitDetails.parents) {
+      // Update parent information from API
+      commit.parents = commitDetails.parents.map(p => p.sha);
+      console.log(`Commit ${commit.sha.substring(0, 7)}: ${commit.parents.length} parent(s)`);
+    } else if (!commit.parents) {
+      // If API fails and no existing parent data, initialize as empty
+      commit.parents = [];
+    }
+  }
+
+  // Build children map for edge drawing (using API parent data)
+  const children = new Map();
+  commits.forEach(c => children.set(c.sha, []));
+  commits.forEach(c => {
+    (c.parents || []).forEach(p => {
+      if (children.has(p)) children.get(p).push(c.sha);
+    });
+  });
+
+  // Use backend's row and column values directly
+  // The backend already calculated correct positions from git log --graph
+  // DON'T recalculate - trust the backend!
+
+  // Note: Branch boundaries are now drawn using column-based algorithm
+  // in drawBranchBoundaries() - no need to pre-group by branch
+
+  return {
+    commits,
+    commitMap,
+    children,
+    commitToBranches
+  };
+}
+
+async function renderGraph(container, graphData, owner, repo) {
   const commits = graphData.commits;
   if (!commits || commits.length === 0) {
     container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);">No commits to display</div>';
     return;
   }
 
-  // Calculate dimensions
-  const minRow = Math.min(...commits.map((c) => c.row));
-  const maxRow = Math.max(...commits.map((c) => c.row));
-  const minColumn = Math.min(...commits.map((c) => c.column));
-  const maxColumn = Math.max(...commits.map((c) => c.column));
+  // Store data globally for branch lookups
+  globalFlows = graphData.flows || [];
 
-  // Build flow color map from API data
-  const flows = graphData.flows || [];
+  // Show loading indicator while fetching branch data
+  container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);"><div class="ui active centered inline loader"></div><p style="margin-top: 20px;">Loading branch affiliations...</p></div>';
+
+  // Prepare graph layout - uses backend's row/column values and API branch data
+  const layoutResult = await prepareGraphLayout(commits, owner, repo);
+  const orderedCommits = layoutResult.commits;
+  const commitMap = layoutResult.commitMap;
+  globalCommits = orderedCommits;
+
+  // Calculate dimensions
+  const minRow = Math.min(...orderedCommits.map((c) => c.row));
+  const maxRow = Math.max(...orderedCommits.map((c) => c.row));
+  const minColumn = Math.min(...orderedCommits.map((c) => c.column));
+  const maxColumn = Math.max(...orderedCommits.map((c) => c.column));
+
+  // Build flow color map from API data (for commit card colors)
+  const flows = globalFlows;
   const flowColorMap = new Map();
   flows.forEach(flow => {
     flowColorMap.set(flow.id, flow.color);
-  });
-
-  // Build commit map for parent lookups
-  const commitMap = new Map();
-  commits.forEach((commit) => {
-    commitMap.set(commit.sha, commit);
   });
 
   // Clear container
@@ -270,7 +767,9 @@ function renderGraph(container, graphData, owner, repo) {
   panZoomGroup.setAttribute('id', 'pan-zoom-group');
   svg.appendChild(panZoomGroup);
 
-  // Draw flows - separate paths and circles for proper layering
+  // Draw flows - separate layers for proper layering
+  const branchBoundariesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  branchBoundariesGroup.setAttribute('class', 'branch-boundaries-layer');
   const pathsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   pathsGroup.setAttribute('class', 'paths-layer');
   const circlesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -282,18 +781,30 @@ function renderGraph(container, graphData, owner, repo) {
   // Track drawn edges to avoid duplicates
   const drawnEdges = new Set();
 
-  // Draw all edges
-  commits.forEach((commit) => {
+  // Draw all edges:
+  // - Edges from child commits to ALL their parents
+  // - For merge commits: connects to both main branch parent AND merged branch parent
+  // - Vertical lines within same column, curved lines between columns
+  orderedCommits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
     const commitFlowId = commit.flow_id;
     const commitColor = flowColorMap.get(commitFlowId) || 0;
 
-    // Draw connections to parents
+    // Get ALL parents (includes merged branch for merge commits)
     const parents = commit.parents || [];
-    parents.forEach((parentSha) => {
+    if (parents.length === 0) return;
+
+    const isMergeCommit = parents.length > 1;
+
+    // Draw edge to EVERY parent
+    // For merge commits: first parent is main branch, rest are merged branches
+    parents.forEach((parentSha, parentIndex) => {
       const parent = commitMap.get(parentSha);
-      if (!parent) return;
+      if (!parent) {
+        console.warn(`Parent ${parentSha} not found for commit ${commit.sha}`);
+        return;
+      }
 
       // Create unique edge key to prevent duplicates
       const edgeKey = `${commit.sha}-${parentSha}`;
@@ -302,58 +813,28 @@ function renderGraph(container, graphData, owner, repo) {
 
       const parentX = parent.column * COLUMN_SPACING + COLUMN_SPACING;
       const parentY = parent.row * ROW_SPACING + (ROW_SPACING / 2);
-      const parentFlowId = parent.flow_id;
-      const parentColor = flowColorMap.get(parentFlowId) || 0;
 
-      // Determine edge color: use commit's color for its outgoing edge to parent
+      // Determine edge color based on commit's branch
       const edgeColor = getBranchColor(commitColor);
 
-      // Generate path based on relationship - linear with rounded corners
-      let pathData;
+      // Start from top center of child commit card (child is lower on screen)
+      const startY = y - CARD_HEIGHT / 2;
+      // End at bottom center of parent card (parent is higher on screen)
+      const endY = parentY + CARD_HEIGHT / 2;
 
-      // Start from bottom center of commit card
-      const startY = y + CARD_HEIGHT / 2;
-      // End at top center of parent card
-      const endY = parentY - CARD_HEIGHT / 2;
+      let pathData;
+      const isMergedBranchEdge = isMergeCommit && parentIndex > 0;
 
       if (x === parentX) {
-        // Same column - straight vertical line
-        pathData = `M ${x} ${startY} L ${parentX} ${endY}`;
+        // Same column - simple vertical line
+        pathData = `M ${x} ${startY} L ${x} ${endY}`;
       } else {
-        // Different columns - linear path with rounded corners
-        const dx = parentX - x;
-        const dy = endY - startY;
-
-        // Define corner radius for smooth turns
-        const cornerRadius = Math.min(20, Math.abs(dx) / 2, Math.abs(dy) / 4);
-
-        // Calculate midpoint for horizontal segment
-        const midY = startY + dy / 2;
-
-        if (dx > 0) {
-          // Parent is to the right
-          pathData = `
-            M ${x} ${startY}
-            L ${x} ${midY - cornerRadius}
-            Q ${x} ${midY}, ${x + cornerRadius} ${midY}
-            L ${parentX - cornerRadius} ${midY}
-            Q ${parentX} ${midY}, ${parentX} ${midY + cornerRadius}
-            L ${parentX} ${endY}
-          `;
-        } else {
-          // Parent is to the left
-          pathData = `
-            M ${x} ${startY}
-            L ${x} ${midY - cornerRadius}
-            Q ${x} ${midY}, ${x - cornerRadius} ${midY}
-            L ${parentX + cornerRadius} ${midY}
-            Q ${parentX} ${midY}, ${parentX} ${midY + cornerRadius}
-            L ${parentX} ${endY}
-          `;
-        }
+        // Different columns - curved connecting edge
+        // This handles merged branch connections
+        pathData = `M ${x} ${startY} C ${x} ${(startY + endY) / 2}, ${parentX} ${(startY + endY) / 2}, ${parentX} ${endY}`;
       }
 
-      // Create individual path for this edge
+      // Create path element
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', pathData.replace(/\s+/g, ' ').trim());
       path.setAttribute('stroke', edgeColor);
@@ -361,13 +842,20 @@ function renderGraph(container, graphData, owner, repo) {
       path.setAttribute('fill', 'none');
       path.setAttribute('stroke-linecap', 'round');
       path.setAttribute('stroke-linejoin', 'round');
-      path.setAttribute('opacity', '0.7');
+      path.setAttribute('opacity', '0.6');
+
+      // Mark merged branch edges with data attribute for debugging
+      if (isMergedBranchEdge) {
+        path.setAttribute('data-merged-branch', 'true');
+        path.setAttribute('class', 'merge-edge');
+      }
+
       pathsGroup.appendChild(path);
     });
   });
 
   // Draw commit cards
-  commits.forEach((commit) => {
+  orderedCommits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
     const commitFlowId = commit.flow_id;
@@ -383,15 +871,19 @@ function renderGraph(container, graphData, owner, repo) {
     card.addEventListener('click', (e) => {
       e.stopPropagation();
       if (globalState.panDistance < PAN_THRESHOLD) {
+        // Branch name will be fetched in openCommitPanel
         openCommitPanel(commit.sha);
-        setSelectedCommit(commit.sha);
       }
     });
 
     circlesGroup.appendChild(card);
   });
 
-  // Add layers in order: paths first, then circles on top
+  // Draw branch boundaries (column-based origin grouping)
+  drawBranchBoundaries(orderedCommits, branchBoundariesGroup);
+
+  // Add layers in order: boundaries first, then paths, then circles on top
+  panZoomGroup.appendChild(branchBoundariesGroup);
   panZoomGroup.appendChild(pathsGroup);
   panZoomGroup.appendChild(circlesGroup);
 
@@ -591,6 +1083,34 @@ function applyTransform() {
 
 // Filters removed - graph shows all branches by default
 
+function getBranchNameFromCommit(sha) {
+  // Find the commit in our global commits array
+  const commit = globalCommits.find(c => c.sha === sha);
+  if (!commit) return null;
+
+  // Use the origin_branch we computed (single branch based on column)
+  return commit.origin_branch || null;
+}
+
+async function fetchLinkedIssues(sha) {
+  try {
+    // Search for issues that mention this commit SHA
+    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/issues?state=all&q=${sha}`);
+    if (!response.ok) return [];
+    const issues = await response.json();
+
+    // Filter issues that actually contain the commit SHA in their body or comments
+    return issues.filter(issue => {
+      const bodyContainsSha = issue.body && issue.body.includes(sha);
+      const titleContainsSha = issue.title && issue.title.includes(sha);
+      return bodyContainsSha || titleContainsSha;
+    });
+  } catch (error) {
+    console.error('Failed to fetch linked issues:', error);
+    return [];
+  }
+}
+
 async function openCommitPanel(sha) {
   const overlay = document.getElementById('commit-detail-overlay');
   const panel = document.getElementById('commit-detail-panel');
@@ -604,10 +1124,24 @@ async function openCommitPanel(sha) {
   content.innerHTML = '<div class="loading">Loading commit details...</div>';
 
   try {
-    // Fetch full commit details
-    const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/git/commits/${sha}?stat=true&files=true`);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const commit = await response.json();
+    // Get branch name from commit data (synchronous lookup)
+    const branchName = getBranchNameFromCommit(sha);
+
+    // Fetch full commit details and linked issues in parallel
+    const [commitResponse, linkedIssues] = await Promise.all([
+      GET(`/api/v1/repos/${globalOwner}/${globalRepo}/git/commits/${sha}?stat=true&files=true`),
+      fetchLinkedIssues(sha)
+    ]);
+
+    if (!commitResponse.ok) throw new Error(`HTTP ${commitResponse.status}`);
+    const commit = await commitResponse.json();
+
+    // Attach linked issues and branch to commit object
+    commit.linked_issues = linkedIssues;
+    commit.branch_name = branchName;
+
+    // Update selected commit with actual branch name
+    setSelectedCommit(sha, branchName);
 
     // Render commit details
     renderCommitDetails(content, commit);
@@ -657,7 +1191,17 @@ function renderCommitDetails(container, commit) {
   // Build commit URL
   const commitUrl = `/${globalOwner}/${globalRepo}/commit/${sha}`;
 
+  // Get linked issues
+  const linkedIssues = commit.linked_issues || [];
+
   const html = `
+    <div class="commit-section commit-message-section">
+      <a href="${commitUrl}" class="commit-message-title-link" target="_blank">
+        <div class="commit-message-title">${escapeHTML(messageTitle)}</div>
+      </a>
+      ${messageBody ? `<div class="commit-message-body">${escapeHTML(messageBody)}</div>` : ''}
+    </div>
+
     <div class="commit-section commit-metadata">
       <div class="commit-author-info">
         <img src="${escapeHTML(commit.author?.avatar_url || '')}" alt="${escapeHTML(author.name || 'Unknown')}">
@@ -684,11 +1228,51 @@ function renderCommitDetails(container, commit) {
       </button>
     </div>
 
-    <div class="commit-section commit-message-section">
-      <a href="${commitUrl}" class="commit-message-title-link" target="_blank">
-        <div class="commit-message-title">${escapeHTML(messageTitle)}</div>
-      </a>
-      ${messageBody ? `<div class="commit-message-body">${escapeHTML(messageBody)}</div>` : ''}
+    ${linkedIssues.length > 0 ? `
+      <div class="commit-section linked-issues-section">
+        <h4><i class="exclamation circle icon"></i> Linked Issues (${linkedIssues.length})</h4>
+        <div class="linked-issues-list">
+          ${linkedIssues.map(issue => {
+            const issueState = issue.state === 'closed' ? 'closed' : 'open';
+            const issueStateIcon = issueState === 'closed' ? 'check circle' : 'circle outline';
+            const issueStateColor = issueState === 'closed' ? 'var(--color-purple)' : 'var(--color-green)';
+            const issueUrl = `/${globalOwner}/${globalRepo}/issues/${issue.number}`;
+            return `
+              <a href="${issueUrl}" class="linked-issue-item" target="_blank">
+                <i class="${issueStateIcon} icon" style="color: ${issueStateColor};"></i>
+                <div class="linked-issue-content">
+                  <div class="linked-issue-title">
+                    <span class="linked-issue-number">#${issue.number}</span>
+                    ${escapeHTML(issue.title)}
+                  </div>
+                  <div class="linked-issue-meta">
+                    ${issue.labels && issue.labels.length > 0 ? issue.labels.map(label =>
+                      `<span class="linked-issue-label" style="background: #${label.color};">${escapeHTML(label.name)}</span>`
+                    ).join('') : ''}
+                  </div>
+                </div>
+              </a>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    <div class="commit-section commit-comments-section">
+      <h4><i class="comment icon"></i> Notes</h4>
+      <div class="commit-comments-container">
+        <textarea
+          class="commit-notes-textarea"
+          placeholder="Add notes about this commit..."
+          rows="4"
+          data-sha="${escapeHTML(sha)}"
+        ></textarea>
+        <div class="commit-notes-actions">
+          <button class="save-commit-notes" data-sha="${escapeHTML(sha)}">
+            <i class="save icon"></i> Save Notes
+          </button>
+        </div>
+      </div>
     </div>
 
     ${files.length > 0 ? `
@@ -777,9 +1361,46 @@ function renderCommitDetails(container, commit) {
     createIssueBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const commitSha = createIssueBtn.getAttribute('data-sha');
-      setSelectedCommit(commitSha);
+      // Branch name is already set from openCommitPanel
       await openCreateIssueModal();
     });
+  }
+
+  // Add event listener for Save Notes button
+  const saveNotesBtn = container.querySelector('.save-commit-notes');
+  if (saveNotesBtn) {
+    saveNotesBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const textarea = container.querySelector('.commit-notes-textarea');
+      const commitSha = saveNotesBtn.getAttribute('data-sha');
+      const notes = textarea.value;
+
+      // Store notes in localStorage (placeholder implementation)
+      const storageKey = `commit-notes-${globalOwner}-${globalRepo}-${commitSha}`;
+      localStorage.setItem(storageKey, notes);
+
+      // Visual feedback
+      saveNotesBtn.innerHTML = '<i class="check icon"></i> Saved';
+      saveNotesBtn.style.background = 'rgba(74, 222, 128, 0.2)';
+      saveNotesBtn.style.color = '#6ee7b7';
+
+      setTimeout(() => {
+        saveNotesBtn.innerHTML = '<i class="save icon"></i> Save Notes';
+        saveNotesBtn.style.background = '';
+        saveNotesBtn.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Load existing notes from localStorage
+  const textarea = container.querySelector('.commit-notes-textarea');
+  if (textarea) {
+    const commitSha = textarea.getAttribute('data-sha');
+    const storageKey = `commit-notes-${globalOwner}-${globalRepo}-${commitSha}`;
+    const savedNotes = localStorage.getItem(storageKey);
+    if (savedNotes) {
+      textarea.value = savedNotes;
+    }
   }
 }
 

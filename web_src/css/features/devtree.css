@@ -32,27 +32,28 @@
   left: 20px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  background: rgba(0, 0, 0, 0.9);
-  border-radius: 0;
-  padding: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  gap: 1px;
+  background: rgba(15, 15, 15, 0.95);
+  border-radius: 6px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   z-index: 100;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .zoom-controls button {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   border: none;
   background: transparent;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
-  border-radius: 0;
-  transition: all 0.15s ease;
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 400;
   display: flex;
   align-items: center;
@@ -61,13 +62,14 @@
 }
 
 .zoom-controls button:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 1);
-  transform: scale(1.05);
+  transform: translateY(-1px);
 }
 
 .zoom-controls button:active {
-  transform: none;
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Custom tooltip for zoom buttons */
@@ -76,23 +78,26 @@
   position: absolute;
   left: 50%;
   top: 100%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(4px);
   margin-top: 8px;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   color: #fff;
-  padding: 6px 10px;
-  font-size: 12px;
+  padding: 6px 12px;
+  font-size: 11px;
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  font-weight: 400;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500;
   z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 .zoom-controls button:hover::after {
   opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* Canvas - Dark Railway-style infinite canvas */
@@ -124,35 +129,53 @@
 
 /* Flow groups - Railway-style flowing lines */
 .paths-layer path {
-  stroke-width: 2.5;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+/* Merge edges - connections from merge commit to merged branch */
+.paths-layer path.merge-edge {
+  stroke-width: 2.5;
   opacity: 0.7;
+}
+
+.paths-layer path.merge-edge:hover {
+  opacity: 0.9;
+  stroke-width: 3;
 }
 
 /* Commit card nodes - Railway-style cards */
 .commit-card {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: center;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
 }
 
 .commit-card rect {
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.commit-card:hover {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
+  transform: translateY(-2px);
 }
 
 .commit-card:hover rect {
-  stroke-width: 2.5 !important;
-  filter: brightness(1.4);
+  stroke-width: 2 !important;
+  filter: brightness(1.3);
 }
 
 .commit-card:hover text {
   fill: #ffffff !important;
-  font-weight: 700 !important;
 }
 
 .commit-card:active {
-  transform: none;
+  transform: translateY(0);
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
 }
 
 /* Legacy circle commits (fallback) */
@@ -171,49 +194,77 @@
   font-family: var(--fonts-monospace);
   font-size: 11px;
   font-weight: 600;
-  fill: #f5f5f5;
+  fill: rgba(255, 255, 255, 0.95);
   pointer-events: none;
   user-select: none;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
+  transition: fill 0.2s ease;
 }
 
 .commit-card-message {
   font-family: var(--fonts-regular);
-  font-size: 10.5px;
-  fill: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
+  fill: rgba(255, 255, 255, 0.7);
   pointer-events: none;
   user-select: none;
+  transition: fill 0.2s ease;
 }
 
 /* Commit type indicators */
 .commit-card.merge-commit rect {
   stroke-width: 2;
-  stroke-dasharray: 4 2;
+  stroke-dasharray: 5 3;
 }
 
 .commit-card.tagged-commit rect {
   stroke-width: 2.5;
+  filter: drop-shadow(0 0 4px currentColor);
+}
+
+/* Issue indicator on commit cards */
+.commit-card.has-issues .issue-indicator-icon {
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Branch boundaries and labels */
+.branch-boundaries-layer {
+  pointer-events: none;
+}
+
+.branch-boundary {
+  transition: opacity 0.3s ease;
+}
+
+.branch-label {
+  font-family: var(--fonts-monospace);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
 }
 
 
-/* Railway-style Dark Inspector Panel - Overlay */
+/* Railway-style Dark Inspector Panel - Overlay (no blur/dim) */
 .devtree-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: transparent;
   z-index: 999;
   opacity: 0;
   visibility: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  pointer-events: none;
 }
 
 .devtree-overlay.active {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 /* Railway-style Dark Inspector Panel - Slide-out */
@@ -224,12 +275,14 @@
   width: 600px;
   max-width: 100%;
   height: 100%;
-  background: #0f0f0f;
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  background: linear-gradient(to left, #0f0f0f 0%, #0f0f0f 100%);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;
   overflow-y: auto;
   overflow-x: hidden;
   transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
+  padding: 20px 20px 20px 32px;
 }
 
 .devtree-panel.active {
@@ -238,20 +291,23 @@
 
 /* Custom scrollbar for panel */
 .devtree-panel::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 .devtree-panel::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .devtree-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .devtree-panel::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.25);
+  background-clip: padding-box;
 }
 
 .devtree-panel .close-panel {
@@ -260,15 +316,15 @@
   right: 16px;
   font-size: 20px;
   padding: 0;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   line-height: 1;
-  border-radius: 0;
-  transition: all 0.2s ease;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   background: transparent;
   border: none;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -277,12 +333,13 @@
 }
 
 .devtree-panel .close-panel:hover {
-  color: #fb7185;
-  transform: scale(1.1);
+  color: #ffffff;
+  background: rgba(251, 113, 133, 0.15);
+  transform: rotate(90deg);
 }
 
 .devtree-panel .panel-content {
-  padding: 24px;
+  padding: 32px 24px 24px 36px;
   padding-top: 60px;
 }
 
@@ -291,21 +348,32 @@
   padding: 60px 20px;
   color: rgba(255, 255, 255, 0.5);
   font-size: 14px;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* Panel content sections - Railway dark cards */
 .commit-section {
   margin-bottom: 16px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   padding: 20px;
-  border-radius: 0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .commit-section:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateX(-2px);
 }
 
 .commit-section:last-child {
@@ -314,11 +382,11 @@
 
 .commit-section h4 {
   margin: 0 0 14px 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   font-size: 10px;
   text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 /* Compact metadata section */
@@ -350,21 +418,23 @@
 }
 
 .commit-sha-link:hover .commit-sha-code {
-  background: rgba(167, 139, 250, 0.2);
-  border-color: rgba(167, 139, 250, 0.5);
-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.1);
+  background: rgba(167, 139, 250, 0.15);
+  border-color: rgba(167, 139, 250, 0.4);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2);
+  transform: translateX(2px);
 }
 
 .commit-sha-code {
   font-family: var(--fonts-monospace);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 6px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 11px;
-  color: #b4a0ff;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #c4b5fd;
   word-break: break-all;
   display: block;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .commit-stats-inline {
@@ -372,24 +442,32 @@
   gap: 16px;
   font-size: 13px;
   align-items: center;
-  padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-left: 2px solid rgba(167, 139, 250, 0.3);
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid rgba(167, 139, 250, 0.4);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.commit-stats-inline:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-left-color: rgba(167, 139, 250, 0.6);
 }
 
 .stat-item {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .stat-item.additions {
-  color: #4ade80;
+  color: #6ee7b7;
   font-weight: 600;
 }
 
 .stat-item.deletions {
-  color: #fb7185;
+  color: #fca5a5;
   font-weight: 600;
 }
 
@@ -401,15 +479,18 @@
 }
 
 .commit-author-info img {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  border: 2px solid rgba(167, 139, 250, 0.3);
-  transition: border-color 0.2s ease;
+  border: 2px solid rgba(167, 139, 250, 0.25);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .commit-author-info:hover img {
   border-color: rgba(167, 139, 250, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
 }
 
 .commit-author-details {
@@ -421,40 +502,43 @@
   display: block;
   font-size: 15px;
   margin-bottom: 4px;
-  color: #f5f5f5;
+  color: #ffffff;
   letter-spacing: -0.01em;
 }
 
 .commit-author-details .email {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
   display: block;
   font-family: var(--fonts-monospace);
 }
 
 .commit-author-details .date {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.45);
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.4);
   display: block;
   margin-top: 6px;
+  font-weight: 500;
 }
 
 /* Create Issue button in commit panel */
 .create-issue-from-commit {
-  transition: all 0.2s ease;
-  border-radius: 0;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 6px;
   font-weight: 600;
   font-size: 13px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.015em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .create-issue-from-commit:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(88, 166, 255, 0.4);
 }
 
 .create-issue-from-commit:active {
   transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Commit message section - no header */
@@ -473,20 +557,23 @@
 }
 
 .commit-message-title-link:hover {
-  opacity: 0.85;
+  opacity: 0.9;
+  text-decoration: none;
 }
 
 .commit-message-title-link:hover .commit-message-title {
-  color: #b4a0ff;
+  color: #c4b5fd;
+  transform: translateX(2px);
+  text-decoration: none;
 }
 
 .commit-message-title {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 600;
   color: #f5f5f5;
   line-height: 1.5;
-  letter-spacing: -0.02em;
-  transition: color 0.2s ease;
+  letter-spacing: -0.015em;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .commit-message-body {
@@ -497,6 +584,170 @@
   color: rgba(255, 255, 255, 0.75);
   padding-left: 12px;
   border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Linked Issues Section */
+.linked-issues-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fb923c;
+}
+
+.linked-issues-section h4 i {
+  color: #fb923c;
+}
+
+.linked-issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.linked-issue-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid #fb923c;
+  border-radius: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  color: inherit;
+}
+
+.linked-issue-item:hover {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.15);
+  border-left-color: #fb923c;
+  transform: translateX(2px);
+}
+
+.linked-issue-item .icon {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.linked-issue-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.linked-issue-title {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.linked-issue-number {
+  color: #fb923c;
+  font-weight: 600;
+  margin-right: 6px;
+  font-family: var(--fonts-monospace);
+}
+
+.linked-issue-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.linked-issue-label {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Commit Notes/Comments Section - Minimal Design */
+.commit-comments-section {
+  background: transparent;
+  border: none;
+  padding: 16px 0;
+}
+
+.commit-comments-section:hover {
+  background: transparent;
+  transform: none;
+}
+
+.commit-comments-section h4 {
+  margin-bottom: 10px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.commit-notes-textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: var(--fonts-regular);
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.commit-notes-textarea:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.commit-notes-textarea:focus {
+  outline: none;
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(167, 139, 250, 0.25);
+}
+
+.commit-notes-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 11px;
+}
+
+.commit-notes-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.save-commit-notes {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 4px;
+  color: rgba(167, 139, 250, 0.7);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.save-commit-notes:hover {
+  background: rgba(167, 139, 250, 0.08);
+  border-color: rgba(167, 139, 250, 0.3);
+  color: rgba(167, 139, 250, 0.9);
+}
+
+.save-commit-notes:active {
+  transform: scale(0.98);
+}
+
+.save-commit-notes i {
+  font-size: 10px;
 }
 
 /* Files section */
@@ -511,142 +762,166 @@
 }
 
 .file-item {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
   padding: 0;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
 .file-item:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+  transform: translateX(2px);
 }
 
 .file-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 12px 16px;
   font-family: var(--fonts-monospace);
   font-size: 12px;
-  transition: background 0.15s ease;
+  transition: background 0.2s ease;
 }
 
 .file-header:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .view-diff-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
-  padding: 5px 7px;
+  padding: 6px 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0;
-  transition: all 0.2s ease;
+  border-radius: 4px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   margin-left: 8px;
 }
 
 .view-diff-btn:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.9);
-  border-color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 1);
+  border-color: rgba(255, 255, 255, 0.25);
   transform: translateY(-1px);
 }
 
 .view-diff-btn.active {
-  background: rgba(167, 139, 250, 0.25);
-  color: #b4a0ff;
-  border-color: rgba(167, 139, 250, 0.6);
-  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.2);
+  background: rgba(167, 139, 250, 0.2);
+  color: #c4b5fd;
+  border-color: rgba(167, 139, 250, 0.5);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.15);
 }
 
 .file-status {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 10px;
   flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.file-item:hover .file-status {
+  transform: scale(1.1);
 }
 
 .file-status.added {
-  background: #dcffe4;
-  color: #22863a;
+  background: rgba(74, 222, 128, 0.2);
+  color: #6ee7b7;
+  border: 1px solid rgba(74, 222, 128, 0.3);
 }
 
 .file-status.modified {
-  background: #fff5b1;
-  color: #735c0f;
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .file-status.deleted {
-  background: #ffdce0;
-  color: #cb2431;
+  background: rgba(251, 113, 133, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(251, 113, 133, 0.3);
 }
 
 .file-path {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.file-item:hover .file-path {
+  color: rgba(255, 255, 255, 1);
 }
 
 .file-changes {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   font-size: 11px;
   margin-left: auto;
+  font-family: var(--fonts-monospace);
 }
 
 .file-changes .additions {
-  color: #4ade80;
+  color: #6ee7b7;
   font-weight: 600;
 }
 
 .file-changes .deletions {
-  color: #fb7185;
+  color: #fca5a5;
   font-weight: 600;
 }
 
 /* Diff viewer */
 .file-diff {
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(0, 0, 0, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.5);
   max-height: 400px;
   overflow-y: auto;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideDown {
   from {
     opacity: 0;
     max-height: 0;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
     max-height: 400px;
+    transform: translateY(0);
   }
 }
 
 .file-diff::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 .file-diff::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .file-diff::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.file-diff::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 .diff-loading,
@@ -668,60 +943,70 @@
 }
 
 .diff-line {
-  padding: 2px 8px;
+  padding: 3px 12px;
   white-space: pre;
   overflow-x: auto;
+  transition: background 0.15s ease;
+}
+
+.diff-line:hover {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .diff-line code {
   font-family: inherit;
   background: none;
   padding: 0;
+  font-size: 12px;
 }
 
 .diff-header {
   color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   font-weight: 600;
 }
 
 .diff-hunk {
-  color: #58a6ff;
-  background: rgba(88, 166, 255, 0.1);
+  color: #7dd3fc;
+  background: rgba(88, 166, 255, 0.08);
   font-weight: 600;
 }
 
 .diff-addition {
-  background: rgba(74, 222, 128, 0.12);
-  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  color: #6ee7b7;
+  border-left: 2px solid rgba(74, 222, 128, 0.3);
 }
 
 .diff-addition::before {
   content: '+';
-  color: #4ade80;
-  margin-right: 4px;
+  color: #6ee7b7;
+  margin-right: 8px;
   font-weight: 600;
+  opacity: 0.7;
 }
 
 .diff-deletion {
-  background: rgba(251, 113, 133, 0.12);
-  color: #fb7185;
+  background: rgba(251, 113, 133, 0.1);
+  color: #fca5a5;
+  border-left: 2px solid rgba(251, 113, 133, 0.3);
 }
 
 .diff-deletion::before {
   content: '-';
-  color: #fb7185;
-  margin-right: 4px;
+  color: #fca5a5;
+  margin-right: 8px;
   font-weight: 600;
+  opacity: 0.7;
 }
 
 .diff-context {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .diff-context::before {
   content: ' ';
-  margin-right: 4px;
+  margin-right: 8px;
 }
 
 /* Responsive design */
@@ -740,7 +1025,8 @@
   }
 
   .devtree-panel .panel-content {
-    padding: 20px;
+    padding: 20px 16px 20px 24px;
+    padding-top: 50px;
   }
 
   .zoom-controls {
@@ -769,18 +1055,19 @@
 /* Agent Status Badge */
 .agent-status-badge {
   position: absolute;
-  top: 80px;
+  top: 76px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 20px;
-  border-radius: 20px;
+  background: rgba(15, 15, 15, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 18px;
+  border-radius: 24px;
   display: flex;
   align-items: center;
   gap: 12px;
   z-index: 100;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 .agent-status-badge .status-icon {
@@ -862,24 +1149,26 @@
   50% { opacity: 0.7; }
 }
 
-/* PR Review Panel (left side) */
+/* PR Review Panel (left side) - no blur/dim */
 .pr-review-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: transparent;
   z-index: 999;
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  pointer-events: none;
 }
 
 .pr-review-overlay.active {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .pr-review-panel {
@@ -889,12 +1178,13 @@
   width: 500px;
   max-width: 100%;
   height: 100%;
-  background: #0f0f0f;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(to right, #0f0f0f 0%, #0f0f0f 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 1000;
   overflow-y: auto;
   overflow-x: hidden;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
 }
 
 .pr-review-panel.active {
@@ -946,30 +1236,32 @@
 }
 
 .pr-review-panel .panel-content {
-  padding: 24px;
+  padding: 32px 24px 24px 36px;
   padding-top: 60px;
 }
 
 .pr-review-section {
   margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.02);
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: background 0.2s ease, border-color 0.2s ease;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pr-review-section:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateX(2px);
 }
 
 .pr-review-section h4 {
   margin: 0 0 14px 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
   font-size: 10px;
   text-transform: uppercase;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.12em;
 }
 
 .pr-title {
