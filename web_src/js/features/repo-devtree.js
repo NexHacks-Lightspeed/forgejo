@@ -7,15 +7,15 @@ import {initDevControls} from './repo-devtree-dev-controls.js';
 
 // Branch color palette (from gitgraph.css) - 16 colors
 const BRANCH_COLORS = [
-  '#7db233', '#499a37', '#ce4751', '#8f9121', '#ac32a6', '#7445e9',
-  '#c67d28', '#4db392', '#aa4d30', '#2a6f84', '#c45327', '#3d965c',
-  '#792a93', '#439d73', '#103aad', '#982e85',
+  '#95e045', '#5ec74d', '#ff5a6e', '#bfd935', '#d648d0', '#8b5fff',
+  '#ff9640', '#5cffb8', '#ff8a60', '#3fa5c7', '#ff6838', '#4dd680',
+  '#b840d8', '#52d68f', '#2d6fff', '#d83ca8',
 ];
 
 const BRANCH_COLORS_HIGHLIGHT = [
-  '#87ca28', '#5ac144', '#ed5a8b', '#ced049', '#db61d7', '#8455f9',
-  '#e6a151', '#44daaa', '#dd7a5c', '#38859c', '#d95520', '#42ae68',
-  '#9126b5', '#4ab080', '#284fb8', '#971c80',
+  '#a8ff58', '#6fff60', '#ff7095', '#e5ff50', '#ff6aff', '#a070ff',
+  '#ffb668', '#68ffcc', '#ffaa80', '#50c8e5', '#ff8550', '#5fff98',
+  '#d858ff', '#68ffa8', '#4d8aff', '#ff50c0',
 ];
 
 // Layout dimensions (Railway-style card nodes)
@@ -586,7 +586,6 @@ function renderFilesTab(pr) {
     html += `
       <div class="pr-file">
         <div class="pr-file-header">
-          <span class="pr-file-status ${file.status}">${file.status.charAt(0).toUpperCase()}</span>
           <span class="pr-file-name">${escapeHTML(file.name)}</span>
           <span class="pr-file-stats">
             <span class="additions">+${file.additions}</span>
@@ -1339,12 +1338,22 @@ function matchPRsToCommits(commits, prs) {
 
   for (const pr of prs) {
     if (pr.merged && pr.merge_commit_sha) {
-      // Merged PR: show at merge commit
+      // Merged PR: show at merge commit (commit with 2+ parents)
       commitToPR.set(pr.merge_commit_sha, pr);
-    } else if (pr.head && pr.head.sha) {
-      // Open/Closed PR: show at head commit (branch tip)
-      commitToPR.set(pr.head.sha, pr);
+    } else if (pr.state === 'open' && pr.head && pr.head.sha) {
+      // Open PR: find potential merge commit (commit with 2+ parents that could be the merge point)
+      // Look for a merge commit that involves this PR's head branch
+      const potentialMergeCommit = commits.find(commit => {
+        return commit.parents && commit.parents.length >= 2 &&
+               commit.parents.includes(pr.head.sha);
+      });
+
+      if (potentialMergeCommit) {
+        commitToPR.set(potentialMergeCommit.sha, pr);
+      }
+      // If no merge commit found for open PR, don't show icon
     }
+    // Closed (not merged) PRs: don't show icon
   }
 
   // Attach PR to commits
@@ -1752,6 +1761,78 @@ function setupZoomControls() {
       }
     });
   }
+
+  // Fullscreen toggle
+  const fullscreenBtn = document.getElementById('fullscreen-toggle');
+  const devtreeContainer = document.getElementById('devtree-container');
+
+  if (fullscreenBtn && devtreeContainer) {
+    fullscreenBtn.addEventListener('click', () => {
+      toggleFullscreen(devtreeContainer, fullscreenBtn);
+    });
+
+    // Listen for fullscreen state changes
+    document.addEventListener('fullscreenchange', () => {
+      updateFullscreenButton(fullscreenBtn);
+    });
+    document.addEventListener('webkitfullscreenchange', () => {
+      updateFullscreenButton(fullscreenBtn);
+    });
+    document.addEventListener('mozfullscreenchange', () => {
+      updateFullscreenButton(fullscreenBtn);
+    });
+    document.addEventListener('msfullscreenchange', () => {
+      updateFullscreenButton(fullscreenBtn);
+    });
+  }
+}
+
+// Toggle fullscreen mode
+function toggleFullscreen(element, button) {
+  if (!document.fullscreenElement &&
+      !document.webkitFullscreenElement &&
+      !document.mozFullScreenElement &&
+      !document.msFullscreenElement) {
+    // Enter fullscreen
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  } else {
+    // Exit fullscreen
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
+
+// Update fullscreen button icon based on state
+function updateFullscreenButton(button) {
+  if (!button) return;
+
+  const isFullscreen = document.fullscreenElement ||
+                       document.webkitFullscreenElement ||
+                       document.mozFullScreenElement ||
+                       document.msFullscreenElement;
+
+  if (isFullscreen) {
+    button.textContent = '⊡'; // Exit fullscreen icon (compress/minimize)
+    button.setAttribute('title', 'Exit Fullscreen');
+  } else {
+    button.textContent = '⛶'; // Enter fullscreen icon (expand/maximize)
+    button.setAttribute('title', 'Enter Fullscreen');
+  }
 }
 
 function zoomTowardCenter(container, zoomFactor) {
@@ -2027,13 +2108,11 @@ function renderCommitDetails(container, commit) {
         <div class="commit-files-list">
           ${files.map((file, index) => {
     const status = file.status || 'modified';
-    const statusLabel = status === 'added' ? 'A' : status === 'deleted' ? 'D' : 'M';
     const additions = file.additions || 0;
     const deletions = file.deletions || 0;
     return `
               <div class="file-item" data-file-index="${index}">
                 <div class="file-header">
-                  <span class="file-status ${status}">${statusLabel}</span>
                   <span class="file-path" title="${escapeHTML(file.filename)}">${escapeHTML(file.filename)}</span>
                   <span class="file-changes">
                     <span class="additions">+${additions}</span>
