@@ -5,6 +5,7 @@ import $ from 'jquery';
 let globalOwner = null;
 let globalRepo = null;
 let selectedCommitSHA = null;
+let selectedCommitBranch = null;
 let currentAgent = null;
 
 // Agent state configuration
@@ -78,8 +79,9 @@ export function initDevTreeAgent(owner, repo) {
   setupModals();
 }
 
-export function setSelectedCommit(sha) {
+export function setSelectedCommit(sha, branch) {
   selectedCommitSHA = sha;
+  selectedCommitBranch = branch || null;
 }
 
 function setupFAB() {
@@ -163,10 +165,20 @@ export async function openCreateIssueModal() {
     baseShaInput.value = selectedCommitSHA;
   }
 
-  // Pre-fill the content with commit reference
+  // Set branch information if available
+  const branchInput = document.getElementById('issue-branch');
+  if (branchInput && selectedCommitBranch) {
+    branchInput.value = selectedCommitBranch;
+  }
+
+  // Pre-fill the content with commit and branch reference
   const contentTextarea = document.querySelector('#create-issue-form textarea[name="content"]');
   if (contentTextarea && selectedCommitSHA) {
-    contentTextarea.value = `\n\n---\nBase commit: \`${selectedCommitSHA}\``;
+    let refInfo = `\n\n---\nBase commit: \`${selectedCommitSHA}\``;
+    if (selectedCommitBranch) {
+      refInfo += `\nBranch: \`${selectedCommitBranch}\``;
+    }
+    contentTextarea.value = refInfo;
   }
 
   // Show modal using custom implementation (avoid Semantic UI modal issues)

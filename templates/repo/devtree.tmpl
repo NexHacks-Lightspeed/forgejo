@@ -65,9 +65,15 @@
 				<label>Description</label>
 				<textarea name="content" rows="6" placeholder="Describe the issue or feature..."></textarea>
 			</div>
-			<div class="field">
-				<label>Base Commit (will be added to description)</label>
-				<input type="text" readonly id="issue-base-sha" placeholder="Select a commit from the graph" style="background: #f5f5f5;">
+			<div class="two fields">
+				<div class="field">
+					<label>Base Commit</label>
+					<input type="text" readonly id="issue-base-sha" placeholder="Select a commit" style="background: #f5f5f5;">
+				</div>
+				<div class="field">
+					<label>Branch</label>
+					<input type="text" readonly id="issue-branch" placeholder="Branch info" style="background: #f5f5f5;">
+				</div>
 			</div>
 			<input type="hidden" name="label_ids" id="devtree-label-ids" value="">
 			<input type="hidden" name="milestone_id" id="devtree-milestone-id" value="">
