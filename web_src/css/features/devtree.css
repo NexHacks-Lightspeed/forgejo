@@ -748,11 +748,10 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
-  padding: 8px;
-  background: rgba(167, 139, 250, 0.1);
-  border: 1px solid rgba(167, 139, 250, 0.3);
-  border-radius: 4px;
-  color: rgba(167, 139, 250, 0.9);
+  padding: 6px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.15s ease;
   display: flex;
@@ -761,7 +760,7 @@
 }
 
 .save-commit-notes:hover {
-  background: rgba(167, 139, 250, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .save-commit-notes:active {
@@ -1848,11 +1847,10 @@
   position: absolute;
   bottom: 8px;
   right: 8px;
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid #22c55e;
-  color: #22c55e;
-  padding: 8px;
-  border-radius: 4px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -1861,11 +1859,11 @@
 }
 
 .comment-send-btn:hover {
-  background: rgba(34, 197, 94, 0.2);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .comment-send-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
 }
 
@@ -2077,4 +2075,32 @@
   .pr-detail-panel-right.active {
     right: 0;
   }
+}
+
+/* Commit Context Menu */
+.commit-context-menu {
+  position: fixed;
+  background: rgba(15, 15, 15, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 4px;
+  min-width: 180px;
+  z-index: 10000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+.context-menu-item {
+  padding: 10px 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }

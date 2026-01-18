@@ -239,6 +239,7 @@ function createCommitCard(commit, x, y, colorNum) {
   // Add PR icon if this commit has a linked PR
   if (commit.pullRequest) {
     const pr = commit.pullRequest;
+    console.log('[DevTree] Adding PR icon to commit', commit.sha.substring(0, 7), 'PR#', pr.number);
     const prIcon = createPRIcon(pr, commit);
     prIcon.setAttribute('transform', `translate(${CARD_WIDTH - 35}, ${-CARD_HEIGHT / 2 + 5})`);
     cardGroup.appendChild(prIcon);
@@ -925,6 +926,85 @@ async function submitPRReview(prNumber, event, body) {
   }
 }
 
+// ============================================================================
+// Commit Context Menu Functions
+// ============================================================================
+
+/**
+ * Show context menu on right-click of commit node
+ */
+function showCommitContextMenu(event, commit) {
+  // Remove any existing context menu
+  hideCommitContextMenu();
+
+  // Set the selected commit for actions
+  setSelectedCommit(commit.sha, commit.origin_branch);
+
+  // Create context menu element
+  const menu = document.createElement('div');
+  menu.id = 'commit-context-menu';
+  menu.className = 'commit-context-menu';
+
+  // Determine if commit is on main/master branch
+  const isMainBranch = commit.origin_branch === 'main' || commit.origin_branch === 'master';
+
+  // Build menu items
+  let menuHTML = '<div class="context-menu-item" data-action="create-issue">Create Issue</div>';
+
+  // Only show "Create Pull Request" if not on main branch
+  if (!isMainBranch) {
+    menuHTML += '<div class="context-menu-item" data-action="create-pr">Create Pull Request</div>';
+  }
+
+  menu.innerHTML = menuHTML;
+
+  // Position the menu at cursor location
+  menu.style.left = `${event.clientX}px`;
+  menu.style.top = `${event.clientY}px`;
+
+  // Add to document
+  document.body.appendChild(menu);
+
+  // Add event listeners to menu items
+  menu.querySelectorAll('.context-menu-item').forEach((item) => {
+    item.addEventListener('click', (e) => {
+      const action = e.target.getAttribute('data-action');
+      handleContextMenuAction(action, commit);
+      hideCommitContextMenu();
+    });
+  });
+
+  // Close menu when clicking elsewhere
+  setTimeout(() => {
+    document.addEventListener('click', hideCommitContextMenu, {once: true});
+    document.addEventListener('contextmenu', hideCommitContextMenu, {once: true});
+  }, 0);
+}
+
+/**
+ * Hide/remove context menu
+ */
+function hideCommitContextMenu() {
+  const menu = document.getElementById('commit-context-menu');
+  if (menu) {
+    menu.remove();
+  }
+}
+
+/**
+ * Handle context menu action selection
+ */
+async function handleContextMenuAction(action, commit) {
+  if (action === 'create-issue') {
+    await openCreateIssueModal();
+  } else if (action === 'create-pr') {
+    // Navigate to PR creation page with pre-filled branch
+    const branch = commit.origin_branch || 'unknown';
+    const prUrl = `/${globalOwner}/${globalRepo}/compare/main...${branch}`;
+    window.location.href = prUrl;
+  }
+}
+
 // Helper: Determine origin branch based on column position
 // Extract branch name from commit's refs (actual git references)
 function extractBranchFromRefs(commit) {
@@ -1337,21 +1417,21 @@ function matchPRsToCommits(commits, prs) {
   const commitToPR = new Map();
 
   for (const pr of prs) {
-    if (pr.merged && pr.merge_commit_sha) {
-      // Merged PR: show at merge commit (commit with 2+ parents)
-      commitToPR.set(pr.merge_commit_sha, pr);
-    } else if (pr.state === 'open' && pr.head && pr.head.sha) {
-      // Open PR: find potential merge commit (commit with 2+ parents that could be the merge point)
-      // Look for a merge commit that involves this PR's head branch
-      const potentialMergeCommit = commits.find(commit => {
-        return commit.parents && commit.parents.length >= 2 &&
-               commit.parents.includes(pr.head.sha);
-      });
+    console.log(`[PR Match] Processing PR #${pr.number}:`, {
+      state: pr.state,
+      merged: pr.merged,
+      head_sha: pr.head?.sha?.substring(0, 7),
+      merge_commit_sha: pr.merge_commit_sha?.substring(0, 7)
+    });
 
-      if (potentialMergeCommit) {
-        commitToPR.set(potentialMergeCommit.sha, pr);
-      }
-      // If no merge commit found for open PR, don't show icon
+    if (pr.merged && pr.merge_commit_sha) {
+      // Merged PR: show at merge commit
+      commitToPR.set(pr.merge_commit_sha, pr);
+      console.log(`[PR Match] Merged PR #${pr.number} -> commit ${pr.merge_commit_sha.substring(0, 7)}`);
+    } else if (pr.state === 'open' && pr.head && pr.head.sha) {
+      // Open PR: show at head commit of the PR branch
+      commitToPR.set(pr.head.sha, pr);
+      console.log(`[PR Match] Open PR #${pr.number} -> head commit ${pr.head.sha.substring(0, 7)}`);
     }
     // Closed (not merged) PRs: don't show icon
   }
@@ -1440,9 +1520,12 @@ async function prepareGraphLayout(commits, owner, repo) {
   // in drawBranchBoundaries() - no need to pre-group by branch
 
   // Fetch and match PRs to commits
-  console.log('Fetching PRs...');
+  console.log('[DevTree] Fetching PRs...');
   const prs = await fetchAllPRs(owner, repo);
+  console.log('[DevTree] Found', prs.length, 'PRs');
   matchPRsToCommits(commits, prs);
+  const commitsWithPRs = commits.filter(c => c.pullRequest);
+  console.log('[DevTree] Matched', commitsWithPRs.length, 'commits to PRs');
 
   return {
     commits,
@@ -1453,8 +1536,15 @@ async function prepareGraphLayout(commits, owner, repo) {
 }
 
 async function renderGraph(container, graphData, owner, repo) {
+  console.log('[DevTree] renderGraph called', {
+    container: container?.id,
+    commitCount: graphData?.commits?.length,
+    flowCount: graphData?.flows?.length
+  });
+
   const commits = graphData.commits;
   if (!commits || commits.length === 0) {
+    console.warn('[DevTree] No commits to display');
     container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);">No commits to display</div>';
     return;
   }
@@ -1539,6 +1629,8 @@ async function renderGraph(container, graphData, owner, repo) {
   // - Edges from child commits to ALL their parents
   // - For merge commits: connects to both main branch parent AND merged branch parent
   // - Vertical lines within same column, curved lines between columns
+  console.log('[DevTree] Drawing edges for', orderedCommits.length, 'commits');
+  let edgeCount = 0;
   orderedCommits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
@@ -1605,10 +1697,13 @@ async function renderGraph(container, graphData, owner, repo) {
       }
 
       pathsGroup.appendChild(path);
+      edgeCount++;
     });
   });
+  console.log('[DevTree] Edges drawn:', edgeCount);
 
   // Draw commit cards
+  console.log('[DevTree] Drawing', orderedCommits.length, 'commit cards');
   orderedCommits.forEach((commit) => {
     const x = commit.column * COLUMN_SPACING + COLUMN_SPACING;
     const y = commit.row * ROW_SPACING + (ROW_SPACING / 2);
@@ -1630,8 +1725,16 @@ async function renderGraph(container, graphData, owner, repo) {
       }
     });
 
+    // Add context menu handler for right-click
+    card.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      showCommitContextMenu(e, commit);
+    });
+
     circlesGroup.appendChild(card);
   });
+  console.log('[DevTree] Commit cards drawn:', circlesGroup.children.length);
 
   // Draw branch boundaries (column-based origin grouping)
   drawBranchBoundaries(orderedCommits, branchBoundariesGroup);
@@ -1640,6 +1743,12 @@ async function renderGraph(container, graphData, owner, repo) {
   panZoomGroup.appendChild(branchBoundariesGroup);
   panZoomGroup.appendChild(pathsGroup);
   panZoomGroup.appendChild(circlesGroup);
+
+  console.log('[DevTree] Appending SVG to container', {
+    edges: pathsGroup.children.length,
+    nodes: circlesGroup.children.length,
+    container: container.id
+  });
 
   container.appendChild(svg);
 
