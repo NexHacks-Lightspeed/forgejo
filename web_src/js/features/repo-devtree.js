@@ -156,8 +156,8 @@ function createCommitCard(commit, x, y, colorNum) {
 
   // Add issue indicator icon if commit has linked issues
   if (hasIssues) {
-    const iconX = x - CARD_WIDTH / 2 + 8;
-    const iconY = y - CARD_HEIGHT / 2 + 8;
+    const iconX = x - CARD_WIDTH / 2 + 12;
+    const iconY = y - CARD_HEIGHT / 2 + 12;
 
     // Create exclamation mark icon (no background)
     const iconText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -1594,17 +1594,15 @@ async function renderGraph(container, graphData, owner, repo) {
   // Store viewBox for reset
   currentViewBox = {x: viewBoxX, y: viewBoxY, width: viewBoxWidth, height: viewBoxHeight};
 
-  // Add grid pattern
-  addGridPattern(svg);
-
-  // Add background rectangle with grid
-  const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  background.setAttribute('x', viewBoxX);
-  background.setAttribute('y', viewBoxY);
-  background.setAttribute('width', viewBoxWidth);
-  background.setAttribute('height', viewBoxHeight);
-  background.setAttribute('fill', 'url(#grid-pattern)');
-  svg.appendChild(background);
+  // Grid pattern removed - using CSS background only
+  // addGridPattern(svg);
+  // const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  // background.setAttribute('x', viewBoxX);
+  // background.setAttribute('y', viewBoxY);
+  // background.setAttribute('width', viewBoxWidth);
+  // background.setAttribute('height', viewBoxHeight);
+  // background.setAttribute('fill', 'url(#grid-pattern)');
+  // svg.appendChild(background);
 
   // Create pan-zoom group
   panZoomGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
