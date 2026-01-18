@@ -1,5 +1,5 @@
-import {GET} from '../modules/fetch.js';
-import {showErrorToast} from '../modules/toast.js';
+import {GET, POST} from '../modules/fetch.js';
+import {showErrorToast, showInfoToast} from '../modules/toast.js';
 import $ from 'jquery';
 import {initDevTreeAgent, setSelectedCommit, openCreateIssueModal} from './repo-devtree-agent.js';
 import {initPRReview, openPRReviewPanel} from './repo-devtree-pr-review.js';
@@ -73,6 +73,7 @@ export function initRepoDevTree() {
 
   // Setup side panel close handlers
   setupPanelHandlers();
+  setupPRDetailPanelHandlers();
 
   // Initialize agent features
   initDevTreeAgent(globalOwner, globalRepo);
@@ -235,8 +236,696 @@ function createCommitCard(commit, x, y, colorNum) {
   authorText.textContent = authorName;
   cardGroup.appendChild(authorText);
 
+  // Add PR icon if this commit has a linked PR
+  if (commit.pullRequest) {
+    const pr = commit.pullRequest;
+    const prIcon = createPRIcon(pr, commit);
+    prIcon.setAttribute('transform', `translate(${CARD_WIDTH - 35}, ${-CARD_HEIGHT / 2 + 5})`);
+    cardGroup.appendChild(prIcon);
+  }
+
   return cardGroup;
 }
+
+// Create PR merge icon based on state - minimal, modern design
+function createPRIcon(pr, commit) {
+  const iconGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  iconGroup.setAttribute('class', 'pr-icon');
+  iconGroup.style.cursor = 'pointer';
+
+  // Determine color based on PR state
+  let color;
+  if (pr.merged) {
+    color = '#8b5cf6'; // purple for merged
+  } else if (pr.state === 'open') {
+    color = '#22c55e'; // green for open
+  } else {
+    color = '#ef4444'; // red for closed
+  }
+
+  // Background circle
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', '14');
+  circle.setAttribute('cy', '14');
+  circle.setAttribute('r', '12');
+  circle.setAttribute('fill', color);
+  circle.setAttribute('opacity', '0.15');
+  circle.setAttribute('stroke', color);
+  circle.setAttribute('stroke-width', '1.5');
+
+  // Git merge symbol (two branches merging)
+  const mergePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  // Two branches: one straight, one curved joining it
+  mergePath.setAttribute('d', 'M10 8 L10 20 M18 8 Q18 14 10 16');
+  mergePath.setAttribute('stroke', color);
+  mergePath.setAttribute('stroke-width', '2');
+  mergePath.setAttribute('stroke-linecap', 'round');
+  mergePath.setAttribute('stroke-linejoin', 'round');
+  mergePath.setAttribute('fill', 'none');
+
+  // Branch points (small circles)
+  const point1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  point1.setAttribute('cx', '10');
+  point1.setAttribute('cy', '8');
+  point1.setAttribute('r', '2.5');
+  point1.setAttribute('fill', color);
+
+  const point2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  point2.setAttribute('cx', '18');
+  point2.setAttribute('cy', '8');
+  point2.setAttribute('r', '2.5');
+  point2.setAttribute('fill', color);
+
+  iconGroup.appendChild(circle);
+  iconGroup.appendChild(mergePath);
+  iconGroup.appendChild(point1);
+  iconGroup.appendChild(point2);
+
+  // Add file count badge if available
+  if (pr.changed_files > 0) {
+    const badge = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    badge.setAttribute('x', '24');
+    badge.setAttribute('y', '10');
+    badge.setAttribute('font-size', '9');
+    badge.setAttribute('font-weight', '600');
+    badge.setAttribute('fill', color);
+    badge.textContent = pr.changed_files;
+    iconGroup.appendChild(badge);
+  }
+
+  // Click handler to expand PR details inline
+  iconGroup.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openPRDetailPanel(pr);
+  });
+
+  return iconGroup;
+}
+
+// Open PR detail panel (slide in from right)
+async function openPRDetailPanel(pr) {
+  const overlay = document.getElementById('pr-detail-overlay-right');
+  const panel = document.getElementById('pr-detail-panel-right');
+  const content = panel.querySelector('.panel-content');
+
+  if (!overlay || !panel || !content) {
+    console.error('PR detail panel elements not found');
+    return;
+  }
+
+  // Show panel and overlay
+  overlay.classList.add('active');
+  panel.classList.add('active');
+
+  // Show loading
+  content.innerHTML = '<div class="loading" style="text-align: center; padding: 40px; color: rgba(255, 255, 255, 0.5);">Loading PR details...</div>';
+
+  try {
+    // Fetch PR details if not already loaded
+    if (!pr.detailsLoaded) {
+      const response = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${pr.number}`);
+      if (response.ok) {
+        const details = await response.json();
+        Object.assign(pr, details);
+        pr.detailsLoaded = true;
+      }
+
+      // Fetch reviews
+      const reviewsResponse = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/pulls/${pr.number}/reviews`);
+      if (reviewsResponse.ok) {
+        pr.reviews = await reviewsResponse.json();
+      }
+
+      // Fetch comments
+      const commentsResponse = await GET(`/api/v1/repos/${globalOwner}/${globalRepo}/issues/${pr.number}/comments`);
+      if (commentsResponse.ok) {
+        pr.comments = await commentsResponse.json();
+      }
+
+      // Fetch files (diff)
+      const filesResponse = await GET(`/${globalOwner}/${globalRepo}/pulls/${pr.number}.diff`);
+      if (filesResponse.ok) {
+        pr.diffText = await filesResponse.text();
+      }
+    }
+
+    // Render PR details with tabs
+    renderPRDetailPanelWithTabs(content, pr);
+  } catch (error) {
+    console.error('Failed to load PR details:', error);
+    content.innerHTML = `<div style="text-align: center; padding: 40px; color: #ef4444;">Failed to load PR details</div>`;
+  }
+}
+
+// Close PR detail panel
+function closePRDetailPanel() {
+  const overlay = document.getElementById('pr-detail-overlay-right');
+  const panel = document.getElementById('pr-detail-panel-right');
+
+  if (overlay) overlay.classList.remove('active');
+  if (panel) panel.classList.remove('active');
+}
+
+// Setup panel event listeners
+function setupPRDetailPanelHandlers() {
+  const overlay = document.getElementById('pr-detail-overlay-right');
+  const closeBtn = document.querySelector('#pr-detail-panel-right .close-panel');
+
+  if (overlay) {
+    overlay.addEventListener('click', closePRDetailPanel);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closePRDetailPanel);
+  }
+}
+
+// Render PR detail panel content with tabs - minimal, modern design
+function renderPRDetailPanelWithTabs(container, pr) {
+  const stateClass = pr.merged ? 'merged' : pr.state;
+  const stateText = pr.merged ? 'Merged' : (pr.state === 'open' ? 'Open' : 'Closed');
+
+  let html = `
+    <div class="pr-detail-header">
+      <div class="pr-detail-title">${escapeHTML(pr.title || 'Pull Request')}</div>
+      <div class="pr-detail-number">
+        #${pr.number}
+        <span class="pr-detail-state ${stateClass}">${stateText}</span>
+      </div>
+      <div class="pr-detail-meta">
+        ${escapeHTML(pr.user?.login || 'Unknown')} wants to merge
+        <strong>${pr.changed_files || 0}</strong> files from
+        <code>${escapeHTML(pr.head?.ref || 'unknown')}</code> into
+        <code>${escapeHTML(pr.base?.ref || 'unknown')}</code>
+      </div>
+      <div class="pr-detail-stats">
+        <span class="pr-detail-additions">+${pr.additions || 0}</span>
+        <span class="pr-detail-deletions">-${pr.deletions || 0}</span>
+      </div>
+    </div>
+
+    <div class="pr-detail-tabs">
+      <button class="pr-tab active" data-tab="conversation">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M1.75 1h8.5c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 10.25 10H7.061l-2.574 2.573A1.458 1.458 0 0 1 2 11.543V10h-.25A1.75 1.75 0 0 1 0 8.25v-5.5C0 1.784.784 1 1.75 1ZM1.5 2.75v5.5c0 .138.112.25.25.25h1a.75.75 0 0 1 .75.75v2.19l2.72-2.72a.749.749 0 0 1 .53-.22h3.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25h-8.5a.25.25 0 0 0-.25.25Z"/>
+        </svg>
+        Conversation
+        <span class="count">${(pr.comments?.length || 0) + 1}</span>
+      </button>
+      <button class="pr-tab" data-tab="files">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z"/>
+        </svg>
+        Files changed
+        <span class="count">${pr.changed_files || 0}</span>
+      </button>
+    </div>
+
+    <div class="pr-detail-tab-content">
+      <div class="pr-tab-pane active" id="conversation-pane">
+        ${renderConversationTab(pr)}
+      </div>
+      <div class="pr-tab-pane" id="files-pane">
+        ${renderFilesTab(pr)}
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+
+  // Setup tab switching
+  const tabs = container.querySelectorAll('.pr-tab');
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.getAttribute('data-tab');
+
+      // Update active tab
+      tabs.forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Update active pane
+      const panes = container.querySelectorAll('.pr-tab-pane');
+      panes.forEach((pane) => pane.classList.remove('active'));
+      container.querySelector(`#${tabName}-pane`).classList.add('active');
+    });
+  });
+
+  // Attach event listeners to action buttons
+  setupActionButtons(container, pr);
+}
+
+// Render conversation tab
+function renderConversationTab(pr) {
+  const reviewStatus = getReviewStatus(pr);
+
+  let html = `
+    <div class="pr-conversation-container">
+      <!-- Description -->
+      <div class="pr-comment">
+        <div class="pr-comment-header">
+          <strong>${escapeHTML(pr.user?.login || 'Unknown')}</strong> opened this pull request
+          <span class="pr-comment-time">${formatTimeAgo(pr.created_at)}</span>
+        </div>
+        <div class="pr-comment-body">
+          ${escapeHTML(pr.body || 'No description provided.')}
+        </div>
+      </div>
+
+      <!-- Comments -->
+      ${renderComments(pr)}
+
+      <!-- Review Status -->
+      <div class="pr-review-status">
+        <div class="pr-status-indicator" style="color: ${reviewStatus.color};">
+          ${reviewStatus.text}
+        </div>
+      </div>
+
+      <!-- Comment Form -->
+      ${pr.state === 'open' ? `
+        <div class="pr-comment-form">
+          <div class="pr-comment-textarea-wrapper">
+            <textarea
+              id="pr-new-comment-${pr.number}"
+              class="pr-comment-textarea"
+              placeholder="Leave a comment..."
+              rows="4"
+            ></textarea>
+            <button class="comment-send-btn" data-pr="${pr.number}" data-action="comment" title="Send comment">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M.989 8 .064 2.68a1.342 1.342 0 0 1 1.85-1.462l13.402 5.744a1.13 1.13 0 0 1 0 2.076L1.913 14.782a1.343 1.343 0 0 1-1.85-1.463L.99 8Zm.603-5.288L2.38 7.25h4.87a.75.75 0 0 1 0 1.5H2.38l-.788 4.538L13.929 8Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- Action buttons (if open) -->
+      ${pr.state === 'open' ? `
+        <div class="pr-detail-actions">
+          <button class="approve" data-pr="${pr.number}" data-action="approve">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
+            </svg>
+            Approve
+          </button>
+          <button class="changes" data-pr="${pr.number}" data-action="changes">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+            </svg>
+            Request Changes
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  return html;
+}
+
+// Render comments
+function renderComments(pr) {
+  if (!pr.comments || pr.comments.length === 0) {
+    return '<div class="pr-no-comments">No comments yet</div>';
+  }
+
+  return pr.comments.map((comment) => `
+    <div class="pr-comment">
+      <div class="pr-comment-header">
+        <strong>${escapeHTML(comment.user?.login || 'Unknown')}</strong> commented
+        <span class="pr-comment-time">${formatTimeAgo(comment.created_at)}</span>
+      </div>
+      <div class="pr-comment-body">
+        ${escapeHTML(comment.body || '')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render files changed tab
+function renderFilesTab(pr) {
+  if (!pr.diffText) {
+    return '<div class="pr-loading">Loading file changes...</div>';
+  }
+
+  // Parse diff text to extract file information
+  const files = parseDiffText(pr.diffText);
+
+  if (files.length === 0) {
+    return '<div class="pr-no-files">No file changes</div>';
+  }
+
+  let html = `
+    <div class="pr-files-container">
+      <div class="pr-files-summary">
+        <strong>${files.length}</strong> ${files.length === 1 ? 'file' : 'files'} changed
+      </div>
+  `;
+
+  files.forEach((file) => {
+    html += `
+      <div class="pr-file">
+        <div class="pr-file-header">
+          <span class="pr-file-status ${file.status}">${file.status.charAt(0).toUpperCase()}</span>
+          <span class="pr-file-name">${escapeHTML(file.name)}</span>
+          <span class="pr-file-stats">
+            <span class="additions">+${file.additions}</span>
+            <span class="deletions">-${file.deletions}</span>
+          </span>
+        </div>
+        <div class="pr-file-diff">
+          ${renderColoredDiff(file.diffLines)}
+        </div>
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  return html;
+}
+
+// Render colored diff with proper formatting
+function renderColoredDiff(diffLines) {
+  if (!diffLines || diffLines.length === 0) {
+    return '<div class="pr-no-diff">No changes</div>';
+  }
+
+  let html = '<div class="diff-table">';
+
+  diffLines.forEach((line) => {
+    let lineClass, marker;
+
+    if (line.type === 'hunk') {
+      lineClass = 'hunk-code';
+      marker = '@';
+      html += `
+        <div class="diff-line ${lineClass}">
+          <span class="diff-marker">${marker}</span>
+          <span class="diff-content">${escapeHTML(line.content)}</span>
+        </div>
+      `;
+    } else {
+      lineClass = line.type === 'add' ? 'add-code' : line.type === 'del' ? 'del-code' : 'context-code';
+      marker = line.type === 'add' ? '+' : line.type === 'del' ? '-' : ' ';
+
+      html += `
+        <div class="diff-line ${lineClass}">
+          <span class="diff-marker">${marker}</span>
+          <span class="diff-content">${escapeHTML(line.content)}</span>
+        </div>
+      `;
+    }
+  });
+
+  html += '</div>';
+
+  return html;
+}
+
+// Parse diff text to extract file information
+function parseDiffText(diffText) {
+  const files = [];
+  const chunks = diffText.split(/(?=diff --git)/);
+
+  chunks.forEach((chunk) => {
+    if (!chunk.trim()) return;
+
+    const match = chunk.match(/diff --git a\/(.*?) b\/(.*?)\n/);
+    if (!match) return;
+
+    const fileName = match[2];
+    let status = 'modified';
+
+    if (chunk.includes('new file mode')) {
+      status = 'added';
+    } else if (chunk.includes('deleted file mode')) {
+      status = 'deleted';
+    } else if (chunk.includes('rename from')) {
+      status = 'renamed';
+    }
+
+    // Parse diff lines with type classification
+    const diffLines = [];
+    let additions = 0;
+    let deletions = 0;
+    const lines = chunk.split('\n');
+    let inDiffContent = false;
+
+    lines.forEach((line) => {
+      // Skip header lines
+      if (line.startsWith('diff --git') || line.startsWith('index ') ||
+          line.startsWith('---') || line.startsWith('+++') ||
+          line.startsWith('new file mode') || line.startsWith('deleted file mode') ||
+          line.startsWith('rename from') || line.startsWith('rename to')) {
+        return;
+      }
+
+      // Start processing after header
+      if (line.startsWith('@@')) {
+        inDiffContent = true;
+        diffLines.push({
+          type: 'hunk',
+          content: line,
+        });
+        return;
+      }
+
+      if (inDiffContent) {
+        if (line.startsWith('+')) {
+          additions++;
+          diffLines.push({
+            type: 'add',
+            content: line.substring(1), // Remove + marker
+          });
+        } else if (line.startsWith('-')) {
+          deletions++;
+          diffLines.push({
+            type: 'del',
+            content: line.substring(1), // Remove - marker
+          });
+        } else if (line.startsWith(' ') || line === '') {
+          diffLines.push({
+            type: 'context',
+            content: line.substring(1) || '', // Remove space marker
+          });
+        }
+      }
+    });
+
+    files.push({
+      name: fileName,
+      status,
+      additions,
+      deletions,
+      diffLines,
+    });
+  });
+
+  return files;
+}
+
+// Format time ago
+function formatTimeAgo(dateString) {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 2592000) return `${Math.floor(seconds / 86400)}d ago`;
+  return date.toLocaleDateString();
+}
+
+// Setup action buttons
+function setupActionButtons(container, pr) {
+  const approveBtn = container.querySelector('[data-action="approve"]');
+  const changesBtn = container.querySelector('[data-action="changes"]');
+  const commentBtn = container.querySelector('[data-action="comment"]');
+
+  if (approveBtn) {
+    approveBtn.addEventListener('click', async () => {
+      approveBtn.disabled = true;
+      approveBtn.textContent = 'Submitting...';
+      const success = await submitPRReview(pr.number, 'APPROVE', '');
+      if (success) {
+        setTimeout(() => {
+          closePRDetailPanel();
+        }, 500);
+      } else {
+        approveBtn.disabled = false;
+        approveBtn.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
+          </svg>
+          Approve
+        `;
+      }
+    });
+  }
+
+  if (changesBtn) {
+    changesBtn.addEventListener('click', async () => {
+      changesBtn.disabled = true;
+      changesBtn.textContent = 'Submitting...';
+      const success = await submitPRReview(pr.number, 'REQUEST_CHANGES', 'Please address the issues');
+      if (success) {
+        setTimeout(() => {
+          closePRDetailPanel();
+        }, 500);
+      } else {
+        changesBtn.disabled = false;
+        changesBtn.innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"/>
+          </svg>
+          Request Changes
+        `;
+      }
+    });
+  }
+
+  if (commentBtn) {
+    commentBtn.addEventListener('click', async () => {
+      const textarea = container.querySelector(`#pr-new-comment-${pr.number}`);
+      const comment = textarea?.value?.trim();
+
+      if (!comment) {
+        showErrorToast('Please enter a comment');
+        return;
+      }
+
+      commentBtn.disabled = true;
+      const originalHTML = commentBtn.innerHTML;
+
+      const success = await submitPRComment(pr.number, comment);
+
+      if (success) {
+        // Add comment to PR object
+        if (!pr.comments) pr.comments = [];
+        pr.comments.push({
+          user: { login: 'You' },
+          created_at: new Date().toISOString(),
+          body: comment,
+        });
+
+        // Find conversation container and add new comment
+        const conversationPane = container.querySelector('#conversation-pane .pr-conversation-container');
+        if (conversationPane) {
+          const reviewStatus = conversationPane.querySelector('.pr-review-status');
+          const newCommentHTML = `
+            <div class="pr-comment">
+              <div class="pr-comment-header">
+                <strong>You</strong> commented
+                <span class="pr-comment-time">just now</span>
+              </div>
+              <div class="pr-comment-body">
+                ${escapeHTML(comment)}
+              </div>
+            </div>
+          `;
+          if (reviewStatus) {
+            reviewStatus.insertAdjacentHTML('beforebegin', newCommentHTML);
+          }
+        }
+
+        textarea.value = '';
+        showInfoToast('Comment posted successfully');
+      }
+
+      commentBtn.disabled = false;
+      commentBtn.innerHTML = originalHTML;
+    });
+  }
+}
+
+// Submit PR comment
+async function submitPRComment(prNumber, comment) {
+  try {
+    const formData = new FormData();
+    formData.append('content', comment);
+
+    const response = await POST(`/${globalOwner}/${globalRepo}/issues/${prNumber}/comments`, {
+      data: formData,
+    });
+
+    if (response.ok) {
+      return true;
+    } else {
+      const text = await response.text().catch(() => '');
+      showErrorToast(text || `Failed to post comment (${response.status})`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Comment submission error:', error);
+    showErrorToast('Failed to post comment: ' + error.message);
+    return false;
+  }
+}
+
+// Helper: Escape HTML
+function escapeHTML(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Helper: Get review status from PR reviews
+function getReviewStatus(pr) {
+  if (!pr.reviews || pr.reviews.length === 0) {
+    return { text: 'No reviews', color: '#666' };
+  }
+
+  const approved = pr.reviews.some(r => r.state === 'APPROVED');
+  const changesRequested = pr.reviews.some(r => r.state === 'CHANGES_REQUESTED');
+
+  if (changesRequested) {
+    return { text: 'Changes requested', color: '#ef4444' };
+  }
+  if (approved) {
+    return { text: 'Approved', color: '#22c55e' };
+  }
+  return { text: `${pr.reviews.length} reviews`, color: '#666' };
+}
+
+// Submit PR review using web endpoint
+async function submitPRReview(prNumber, event, body) {
+  try {
+    // Map event to form type
+    const typeMap = {
+      'APPROVE': 'approve',
+      'REQUEST_CHANGES': 'reject',
+      'COMMENT': 'comment',
+    };
+
+    // Use web endpoint instead of API endpoint for proper authentication
+    const formData = new FormData();
+    formData.append('type', typeMap[event] || 'comment');
+    formData.append('content', body || '');
+    formData.append('commit_id', ''); // Empty for overall review
+
+    const response = await POST(`/${globalOwner}/${globalRepo}/pulls/${prNumber}/files/reviews/submit`, {
+      data: formData,
+    });
+
+    if (response.ok) {
+      showInfoToast(`Review submitted successfully`);
+      return true;
+    } else {
+      const text = await response.text().catch(() => '');
+      showErrorToast(text || `Failed to submit review (${response.status})`);
+      return false;
+    }
+  } catch (error) {
+    console.error('Review submission error:', error);
+    showErrorToast('Failed to submit review: ' + error.message);
+    return false;
+  }
+}
+
 // Helper: Determine origin branch based on column position
 // Extract branch name from commit's refs (actual git references)
 function extractBranchFromRefs(commit) {
@@ -622,6 +1311,57 @@ function extractBranchName(commit) {
   return branchRef ? branchRef.replace('refs/heads/', '') : null;
 }
 
+// Fetch all PRs (open, merged, closed)
+async function fetchAllPRs(owner, repo) {
+  const states = ['open', 'closed']; // closed includes both merged and not-merged
+  const allPRs = [];
+
+  for (const state of states) {
+    try {
+      const response = await GET(`/api/v1/repos/${owner}/${repo}/pulls?state=${state}&limit=100`);
+      if (response.ok) {
+        const prs = await response.json();
+        allPRs.push(...prs);
+        console.log(`[PR Fetch] Found ${prs.length} ${state} PRs`);
+      }
+    } catch (error) {
+      console.error(`Failed to fetch ${state} PRs:`, error);
+    }
+  }
+
+  console.log(`[PR Fetch] Total PRs: ${allPRs.length}`);
+  return allPRs;
+}
+
+// Match PRs to commits by SHA
+function matchPRsToCommits(commits, prs) {
+  const commitToPR = new Map();
+
+  for (const pr of prs) {
+    if (pr.merged && pr.merge_commit_sha) {
+      // Merged PR: show at merge commit
+      commitToPR.set(pr.merge_commit_sha, pr);
+    } else if (pr.head && pr.head.sha) {
+      // Open/Closed PR: show at head commit (branch tip)
+      commitToPR.set(pr.head.sha, pr);
+    }
+  }
+
+  // Attach PR to commits
+  let matchCount = 0;
+  commits.forEach(commit => {
+    const pr = commitToPR.get(commit.sha);
+    if (pr) {
+      commit.pullRequest = pr;
+      matchCount++;
+      console.log(`[PR Match] Commit ${commit.sha.substring(0, 7)} linked to PR #${pr.number} (${pr.state}${pr.merged ? ', merged' : ''})`);
+    }
+  });
+
+  console.log(`[PR Match] Linked ${matchCount} commits to PRs`);
+  return commitToPR;
+}
+
 // Enhanced layout function - affiliates commits with branches using API
 async function prepareGraphLayout(commits, owner, repo) {
   // Build commit map for lookups
@@ -690,6 +1430,11 @@ async function prepareGraphLayout(commits, owner, repo) {
   // Note: Branch boundaries are now drawn using column-based algorithm
   // in drawBranchBoundaries() - no need to pre-group by branch
 
+  // Fetch and match PRs to commits
+  console.log('Fetching PRs...');
+  const prs = await fetchAllPRs(owner, repo);
+  matchPRsToCommits(commits, prs);
+
   return {
     commits,
     commitMap,
@@ -709,7 +1454,7 @@ async function renderGraph(container, graphData, owner, repo) {
   globalFlows = graphData.flows || [];
 
   // Show loading indicator while fetching branch data
-  container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);"><div class="ui active centered inline loader"></div><p style="margin-top: 20px;">Loading branch affiliations...</p></div>';
+  container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--color-text-light);"><div class="ui active centered inline loader"></div><p style="margin-top: 20px;">Loading branch affiliations and PRs...</p></div>';
 
   // Prepare graph layout - uses backend's row/column values and API branch data
   const layoutResult = await prepareGraphLayout(commits, owner, repo);
@@ -1204,7 +1949,6 @@ function renderCommitDetails(container, commit) {
 
     <div class="commit-section commit-metadata">
       <div class="commit-author-info">
-        <img src="${escapeHTML(commit.author?.avatar_url || '')}" alt="${escapeHTML(author.name || 'Unknown')}">
         <div class="commit-author-details">
           <span class="name">${escapeHTML(author.name || 'Unknown')}</span>
           <span class="date">${formatDate(author.date)}</span>
@@ -1261,15 +2005,17 @@ function renderCommitDetails(container, commit) {
     <div class="commit-section commit-comments-section">
       <h4><i class="comment icon"></i> Notes</h4>
       <div class="commit-comments-container">
-        <textarea
-          class="commit-notes-textarea"
-          placeholder="Add notes about this commit..."
-          rows="4"
-          data-sha="${escapeHTML(sha)}"
-        ></textarea>
-        <div class="commit-notes-actions">
-          <button class="save-commit-notes" data-sha="${escapeHTML(sha)}">
-            <i class="save icon"></i> Save Notes
+        <div class="commit-notes-textarea-wrapper">
+          <textarea
+            class="commit-notes-textarea"
+            placeholder="Add notes about this commit..."
+            rows="4"
+            data-sha="${escapeHTML(sha)}"
+          ></textarea>
+          <button class="save-commit-notes" data-sha="${escapeHTML(sha)}" title="Save notes">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M.989 8 .064 2.68a1.342 1.342 0 0 1 1.85-1.462l13.402 5.744a1.13 1.13 0 0 1 0 2.076L1.913 14.782a1.343 1.343 0 0 1-1.85-1.463L.99 8Zm.603-5.288L2.38 7.25h4.87a.75.75 0 0 1 0 1.5H2.38l-.788 4.538L13.929 8Z"/>
+            </svg>
           </button>
         </div>
       </div>
@@ -1380,13 +2126,20 @@ function renderCommitDetails(container, commit) {
       localStorage.setItem(storageKey, notes);
 
       // Visual feedback
-      saveNotesBtn.innerHTML = '<i class="check icon"></i> Saved';
+      const originalHTML = saveNotesBtn.innerHTML;
+      saveNotesBtn.innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z"/>
+        </svg>
+      `;
       saveNotesBtn.style.background = 'rgba(74, 222, 128, 0.2)';
-      saveNotesBtn.style.color = '#6ee7b7';
+      saveNotesBtn.style.borderColor = 'rgba(74, 222, 128, 0.5)';
+      saveNotesBtn.style.color = 'rgba(74, 222, 128, 1)';
 
       setTimeout(() => {
-        saveNotesBtn.innerHTML = '<i class="save icon"></i> Save Notes';
+        saveNotesBtn.innerHTML = originalHTML;
         saveNotesBtn.style.background = '';
+        saveNotesBtn.style.borderColor = '';
         saveNotesBtn.style.color = '';
       }, 2000);
     });
@@ -1476,11 +2229,4 @@ function formatDate(dateString) {
   if (!dateString) return '';
   const date = new Date(dateString);
   return date.toLocaleString();
-}
-
-function escapeHTML(str) {
-  if (!str) return '';
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
 }
